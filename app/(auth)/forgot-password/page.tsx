@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
 
           {step === 1 && (
             <Step1
-              onNext={(e) => {
+              onNext={() => {
                 setStep(2);
               }}
             />

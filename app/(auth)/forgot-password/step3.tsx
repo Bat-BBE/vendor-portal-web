@@ -6,7 +6,7 @@ import { Eye, EyeOff, CheckCircle2, Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 type Step3Form = { password: string; confirm: string };
 
@@ -41,8 +41,8 @@ export function Step3({ onDone }: { onDone: () => void }) {
     defaultValues: { password: "", confirm: "" },
   });
 
-  const password = form.watch("password");
-  const confirm = form.watch("confirm");
+  const password = useWatch({ control: form.control, name: "password" });
+  const confirm = useWatch({ control: form.control, name: "confirm" });
 
   const allValid = rules.every((r) => r.test(password, confirm));
 
@@ -153,7 +153,6 @@ export function Step3({ onDone }: { onDone: () => void }) {
           variant="brandSecondary"
           className="w-full py-6 px-8 mt-[20px] text-base"
           disabled={loading || !allValid}
-          onClick={onDone}
         >
           {loading ? "Хадгалж байна..." : "Нэвтрэх"}
         </Button>
