@@ -27,7 +27,7 @@ async function getCurrentUser() {
   };
 }
 
-export default async function DashboardLayout({
+export default async function OrderLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -30,29 +30,20 @@ export function UserAvatar({
     );
   }
 
-  const colors = [
-    "#00A99A",
-    "#3D6DFF",
-    "#FF2461",
-    "#FFB600",
-    "#22B994",
-    "#8B5CF6",
-    "#F03131",
-    "#0D6B5E",
-  ];
+  const colors = ["#e6f8f7"];
   const idx =
     name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length;
 
   return (
     <div
       className={cn(
-        "rounded-full flex items-center justify-center text-white font-semibold shrink-0",
+        "rounded-lg flex items-center justify-center text-brand-600 font-semibold shrink-0",
         className,
       )}
       style={{
         width: size,
         height: size,
-        fontSize: size * 0.38,
+        fontSize: size * 0.68,
         backgroundColor: colors[idx],
       }}
       aria-label={name}

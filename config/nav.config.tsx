@@ -1,171 +1,247 @@
+import type { NavItem, UserRole } from "@/models/sidebarModel";
 import {
-  LayoutDashboard,
-  ShoppingCart,
   Package,
-  BarChart2,
   Settings,
-  HelpCircle,
-  LogOut,
-  Bookmark,
+  MapPin,
   Bell,
-  Users,
   FileText,
-  CreditCard,
-  Store,
-  Truck,
-  Shield,
-  Sliders,
+  TvMinimal,
+  Wallet,
+  ClipboardList,
+  BriefcaseBusiness,
+  BookMarked,
+  CircleCheck,
+  CircleAlert,
+  MessageCircle,
 } from "lucide-react";
-import { NavItem } from "@/models/sidebarModel";
-
-export type UserRole =
-  | "admin"
-  | "vendor"
-  | "finance"
-  | "logistics"
-  | "marketing"
-  | "viewer";
 
 const COMMON_BOTTOM: NavItem[] = [
-  { label: "Тусламж", href: "/help", icon: <HelpCircle size={16} /> },
-  { label: "Сонирхол", href: "/saved", icon: <Bookmark size={16} /> },
-  { label: "Гарах", href: "/logout", icon: <LogOut size={16} /> },
+  { label: "Тусламж", href: "/help", icon: CircleCheck },
+  { label: "Салбарын байршил", href: "/branches", icon: MapPin },
+  { label: "Санал хүсэлт", href: "/feedback", icon: CircleAlert },
+  { label: "Холбоо барих", href: "/contact", icon: MessageCircle },
 ];
 
-const NAV_CONFIG: Record<UserRole, { nav: NavItem[]; bottom?: NavItem[] }> = {
-  admin: {
-    nav: [
-      {
-        label: "Хяналтын самбар",
-        href: "/dashboard",
-        icon: <LayoutDashboard size={16} />,
-      },
-      {
-        label: "Төлбөр тооцоо",
-        icon: <CreditCard size={16} />,
-        children: [
-          { label: "Бүх захиалга", href: "/payments" },
-          { label: "Хүлээгдэж буй", href: "/payments/pending" },
-          { label: "Буцаалт", href: "/payments/refund" },
-        ],
-      },
-      { label: "Захиалга", href: "/orders", icon: <ShoppingCart size={16} /> },
-      {
-        label: "Хамтын ажиллагаа",
-        icon: <Users size={16} />,
-        children: [
-          { label: "Вендорууд", href: "/partners/vendors" },
-          { label: "Нийлүүлэгчид", href: "/partners/suppliers" },
-        ],
-      },
-      { label: "Тайлан", href: "/reports", icon: <BarChart2 size={16} /> },
-      { label: "Хэрэглэгчид", href: "/users", icon: <Users size={16} /> },
-      { label: "Тохиргоо", href: "/settings", icon: <Settings size={16} /> },
-    ],
-    bottom: [
-      { label: "Эрхийн удирдлага", href: "/roles", icon: <Shield size={16} /> },
-      ...COMMON_BOTTOM,
-    ],
+const HOME: NavItem = {
+  label: "Нүүр хуудас",
+  href: "/dashboard",
+  icon: TvMinimal,
+  description: "Мэдээ мэдээлэл",
+};
+
+const REPORTS: NavItem = {
+  label: "Тайлан",
+  icon: BookMarked,
+  children: [
+    {
+      label: "Борлуулалтын тайлан",
+      href: "/reports",
+    },
+    {
+      label: "Нөөцийн тайлан",
+      href: "/reports/inventory",
+    },
+  ],
+};
+
+const PAYMENTS: NavItem = {
+  label: "Төлбөр тооцоо",
+  icon: Wallet,
+  children: [
+    {
+      label: "Авлагын дэлгэрэнгүй",
+      href: "/payments/receivables",
+    },
+    {
+      label: "Харилцагчийн суутгалууд",
+      href: "/payments/deductions",
+    },
+    {
+      label: "Нэхэмжлэх",
+      href: "/payments/invoices",
+    },
+    {
+      label: "Тооцооны акт",
+      href: "/payments/acts",
+    },
+  ],
+};
+
+const ORDERS_VIEW: NavItem = {
+  label: "Захиалга",
+  icon: ClipboardList,
+  children: [
+    {
+      label: "Захиалга",
+      href: "/orders",
+    },
+    {
+      label: "Захиалгын хуваарь",
+      href: "/orders/schedule",
+    },
+    {
+      label: "Захиалгын биелэлт",
+      href: "/orders/fulfillment",
+    },
+    {
+      label: "Буцаалтын захиалга",
+      href: "/orders/returns",
+    },
+  ],
+};
+
+const PARTNERS: NavItem = {
+  label: "Хамтын ажиллагаа",
+  icon: BriefcaseBusiness,
+  roles: ["system_admin", "accountant"],
+  children: [
+    {
+      label: "Бараа бүтээгдэхүүн",
+      href: "/partners",
+      roles: ["system_admin"],
+    },
+    {
+      label: "Бар код өөрчлөх",
+      href: "/partners/barcode",
+      roles: ["system_admin"],
+    },
+    {
+      label: "Үнэ өөрчлөх",
+      href: "/partners/price",
+      roles: ["system_admin", "customer"],
+    },
+    {
+      label: "Урамшуулал",
+      href: "/partners/promotions",
+      roles: ["system_admin", "customer"],
+    },
+    {
+      label: "Тасалдал",
+      href: "/partners/outages",
+      roles: ["system_admin", "customer"],
+    },
+  ],
+};
+
+const CUSTOMER_SETTINGS: NavItem = {
+  label: "Харилцагчийн тохиргоо",
+  icon: Settings,
+  children: [
+    {
+      label: "Байгууллагын мэдээлэл",
+      href: "/settings/company",
+    },
+    {
+      label: "Хэрэглэгчийн жагсаалт",
+      href: "/settings/users",
+    },
+    {
+      label: "Хэрэглэгчийн эрхийн тохиргоо",
+      href: "/settings/permissions",
+    },
+    {
+      label: "Систем ашиглалтын төлбөр",
+      href: "/settings/billing",
+    },
+    {
+      label: "Харилцагчид",
+      href: "/settings/customers",
+    },
+    {
+      label: "Гэрээ",
+      href: "/settings/contracts",
+    },
+  ],
+};
+
+// const PHARMACY_REQUESTS: NavItem = {
+//   label: "Хүсэлтүүд",
+//   icon: FileText,
+//   children: [
+//     { label: "Шинэ бүтээгдэхүүн", href: "/requests/new-product" },
+//     { label: "Баркод өөрчлөлт", href: "/requests/barcode" },
+//     { label: "Үнэ өөрчлөх", href: "/requests/price" },
+//   ],
+// };
+
+type RoleConfig = { nav: NavItem[]; bottom: NavItem[] };
+
+const NAV_CONFIG: Record<UserRole, RoleConfig> = {
+  system_admin: {
+    nav: [HOME, PAYMENTS, ORDERS_VIEW, PARTNERS, REPORTS, CUSTOMER_SETTINGS],
+    bottom: COMMON_BOTTOM,
   },
 
-  vendor: {
+  customer: {
     nav: [
-      { label: "Нүүр хуудас", href: "/", icon: <LayoutDashboard size={16} /> },
-      { label: "Миний дэлгүүр", href: "/store", icon: <Store size={16} /> },
-      {
-        label: "Захиалгууд",
-        icon: <ShoppingCart size={16} />,
-        children: [
-          { label: "Шинэ захиалга", href: "/orders/new" },
-          { label: "Явагдаж буй", href: "/orders/active" },
-          { label: "Дууссан", href: "/orders/done" },
-        ],
-      },
-      { label: "Бүтээгдэхүүн", href: "/products", icon: <Package size={16} /> },
-      {
-        label: "Тайлан",
-        href: "/reports",
-        icon: <BarChart2 size={16} />,
-        badge: 3,
-      },
+      HOME,
+      ORDERS_VIEW,
+      { label: "Бараа", href: "/products", icon: Package },
     ],
     bottom: COMMON_BOTTOM,
   },
 
-  finance: {
-    nav: [
-      {
-        label: "Хяналтын самбар",
-        href: "/dashboard",
-        icon: <LayoutDashboard size={16} />,
-      },
-      {
-        label: "Төлбөр тооцоо",
-        icon: <CreditCard size={16} />,
-        children: [
-          { label: "Авлага", href: "/finance/receivable" },
-          { label: "Өглөг", href: "/finance/payable" },
-          { label: "Буцаалт", href: "/finance/refund" },
-        ],
-      },
-      { label: "Нэхэмжлэх", href: "/invoices", icon: <FileText size={16} /> },
-      { label: "Тайлан", href: "/reports", icon: <BarChart2 size={16} /> },
-    ],
+  accountant: {
+    nav: [HOME, PAYMENTS, PARTNERS, CUSTOMER_SETTINGS],
     bottom: COMMON_BOTTOM,
   },
 
-  logistics: {
-    nav: [
-      { label: "Нүүр хуудас", href: "/", icon: <LayoutDashboard size={16} /> },
-      { label: "Хүргэлт", href: "/delivery", icon: <Truck size={16} /> },
-      {
-        label: "Захиалгууд",
-        icon: <ShoppingCart size={16} />,
-        children: [
-          { label: "Хүлээгдэж буй", href: "/orders/pending" },
-          { label: "Явагдаж буй", href: "/orders/active" },
-        ],
-      },
-      { label: "Агуулах", href: "/warehouse", icon: <Package size={16} /> },
-    ],
+  pharmacy_manager: {
+    nav: [HOME, PARTNERS],
     bottom: COMMON_BOTTOM,
   },
 
-  marketing: {
-    nav: [
-      { label: "Нүүр хуудас", href: "/", icon: <LayoutDashboard size={16} /> },
-      {
-        label: "Кампанит ажил",
-        icon: <Bell size={16} />,
-        children: [
-          { label: "Идэвхтэй", href: "/campaigns/active" },
-          { label: "Дууссан", href: "/campaigns/done" },
-        ],
-      },
-      { label: "Тайлан", href: "/reports", icon: <BarChart2 size={16} /> },
-      { label: "Тохиргоо", href: "/settings", icon: <Sliders size={16} /> },
-    ],
+  pharmacist: {
+    nav: [HOME, ORDERS_VIEW],
     bottom: COMMON_BOTTOM,
   },
 
-  viewer: {
+  marketing_manager: {
     nav: [
-      { label: "Нүүр хуудас", href: "/", icon: <LayoutDashboard size={16} /> },
-      { label: "Тайлан", href: "/reports", icon: <BarChart2 size={16} /> },
+      HOME,
+      {
+        label: "Маркетинг, Сурталчилгаа",
+        icon: Bell,
+        children: [
+          { label: "Аян", href: "/marketing/campaigns" },
+          { label: "Хүсэлтүүд", href: "/marketing/promotions" },
+          { label: "Баннер, Попап", href: "/marketing/reports" },
+        ],
+      },
     ],
     bottom: COMMON_BOTTOM,
   },
 };
 
-export function getNavByRole(role: UserRole) {
-  return NAV_CONFIG[role] ?? NAV_CONFIG.viewer;
+function filterNav(items: NavItem[], role: UserRole): NavItem[] {
+  return items
+    .filter((item) => {
+      if (!item.roles) return true;
+      return item.roles.includes(role);
+    })
+    .map((item) => ({
+      ...item,
+      children: item.children ? filterNav(item.children, role) : undefined,
+    }))
+    .filter((item) => {
+      if (!item.children) return true;
+      return item.children.length > 0;
+    });
+}
+
+export function getNavByRole(role: UserRole): RoleConfig {
+  const base = NAV_CONFIG[role] ?? NAV_CONFIG.customer;
+  return {
+    nav: filterNav(base.nav, role),
+    bottom: filterNav(base.bottom, role),
+  };
 }
 
 export const ROLE_LABELS: Record<UserRole, string> = {
-  admin: "Админ",
-  vendor: "Вендор",
-  finance: "Санхүү",
-  logistics: "Логистик",
-  marketing: "Маркетинг",
-  viewer: "Харагч",
+  system_admin: "Систем администратор",
+  customer: "Харилцагч хэрэглэгч",
+  accountant: "Санхүү - Нягтлан бодогч",
+  pharmacy_manager: "Эмийн алба - Менежер",
+  pharmacist: "Эмийн сан - Жор баригч",
+  marketing_manager: "Маркетинг - Менежер",
 };
