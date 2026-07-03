@@ -329,7 +329,7 @@ export function Header({
       )}
     >
       <div className="flex min-w-0 flex-1 items-center gap-4">
-        <SidebarTrigger className="-ml-1 shrink-0" />
+        <SidebarTrigger className="-ml-1 shrink-0 cursor-pointer" />
         <HeaderBreadcrumb items={breadcrumbs} />
       </div>
 

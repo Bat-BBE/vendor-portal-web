@@ -157,15 +157,18 @@ export default function OrdersPage() {
   }, [orders, page, pageSize]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <DataTable
-        columns={orderColumns}
-        data={paginatedOrders}
-        numbered
-        getRowId={(row) => row.id}
-        onHeaderMenuClick={() => console.log("Column settings")}
-        emptyMessage="Захиалга олдсонгүй"
-      />
+    <div className="flex h-auto min-h-0 flex-col gap-6">
+      <div className="flex-1 min-h-0">
+        <DataTable
+          columns={orderColumns}
+          data={paginatedOrders}
+          numbered
+          getRowId={(row) => row.id}
+          onHeaderMenuClick={() => console.log("Column settings")}
+          stickyHeader
+          emptyMessage="Захиалга олдсонгүй"
+        />
+      </div>
       <TablePagination
         page={page}
         pageSize={pageSize}

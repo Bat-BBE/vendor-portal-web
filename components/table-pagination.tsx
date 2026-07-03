@@ -57,7 +57,7 @@ export function TablePagination({
   };
 
   return (
-    <div className="position-relative mt-6 flex items-center justify-end gap-[16px] px-[16px] py-[20px]">
+    <div className="position-relative flex items-center justify-end gap-[16px] px-[16px] py-[20px]">
       <Pagination className="mx-0 w-auto">
         <PaginationContent>
           <PaginationItem>
@@ -86,7 +86,7 @@ export function TablePagination({
                   href="#"
                   isActive={page === item}
                   className={cn(
-                    "h-10 w-10 rounded-xl font-medium text-[14px] text-foreground",
+                    "h-8 w-8 rounded-xl font-medium text-[14px] text-foreground",
                     page === item
                       ? "bg-brand-50 text-brand-500"
                       : "hover:bg-muted",
@@ -124,7 +124,7 @@ export function TablePagination({
         value={pageSize.toString()}
         onValueChange={(value) => onPageSizeChange(Number(value))}
       >
-        <SelectTrigger className="w-[140px] border-none">
+        <SelectTrigger className="w-[140px] border-none cursor-pointer">
           <span>Хуудас:</span>
           <span className="font-medium">{pageSize}</span>
         </SelectTrigger>
@@ -139,7 +139,7 @@ export function TablePagination({
             <SelectItem
               key={size}
               value={size.toString()}
-              className="h-10 rounded-lg px-3 text-sm data-[highlighted]:bg-accent"
+              className="h-10 rounded-lg px-3 text-sm data-[highlighted]:bg-accent cursor-pointer"
             >
               <span className="text-foreground">Хуудас: </span>
               <span className="font-medium text-foreground">{size}</span>

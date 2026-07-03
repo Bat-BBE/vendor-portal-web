@@ -37,9 +37,11 @@ export default async function OrderLayout({
   return (
     <SidebarProvider>
       <AppSidebar role={user.role} />
-      <SidebarInset>
+      <SidebarInset className="flex h-screen min-w-0 flex-col overflow-hidden">
         <HeaderWrapper role={user.role} user={user} />
-        <main className="flex-1 overflow-y-auto px-2 py-1">{children}</main>
+        <main className="flex-1 min-h-0 overflow-hidden py-4 px-8">
+          {children}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );

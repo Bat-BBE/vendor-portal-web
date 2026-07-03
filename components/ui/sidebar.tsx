@@ -23,7 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PanelLeftIcon } from "lucide-react";
+import { PanelLeftIcon, PanelRightIcon } from "lucide-react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -256,7 +256,9 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, state } = useSidebar();
+
+  const isCollapsed = state === "collapsed";
 
   return (
     <Button
@@ -271,7 +273,8 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      {isCollapsed ? <PanelRightIcon /> : <PanelLeftIcon />}
+
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -371,7 +374,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="sidebar-content"
       data-sidebar="content"
       className={cn(
-        "no-scrollbar flex min-h-0 flex-1 flex-col gap-0 overflow-auto",
+        "sidebar-scroll flex min-h-0 flex-1 flex-col gap-0 overflow-auto",
         className,
       )}
       {...props}

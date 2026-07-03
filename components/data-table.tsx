@@ -14,6 +14,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export type DataTableAlign = "left" | "center" | "right";
 
@@ -43,6 +44,8 @@ export interface DataTableProps<T> {
   hideHeaderMenu?: boolean;
   emptyMessage?: React.ReactNode;
   className?: string;
+  maxWidth?: number | string;
+  stickyHeader?: boolean;
 }
 
 const statusPillTone = {
@@ -124,6 +127,7 @@ export function DataTable<T>({
   hideHeaderMenu = false,
   emptyMessage = "Мэдээлэл олдсонгүй",
   className,
+  stickyHeader = false,
 }: DataTableProps<T>) {
   const isControlled = selectedIds !== undefined && !!onSelectedIdsChange;
   const [internalSelected, setInternalSelected] = React.useState<
@@ -165,12 +169,12 @@ export function DataTable<T>({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border border-default bg-background",
+        "flex h-full min-h-0 w-full flex-col overflow-hidden rounded-xl border border-default bg-background",
         className,
       )}
     >
-      <div className="overflow-x-auto">
-        <Table>
+      <div className="sidebar-scroll h-full w-full overflow-auto">
+        <Table className="min-w-max">
           <colgroup>
             {selectable && <col style={{ width: "44px" }} />}
             {numbered && <col style={{ width: "48px" }} />}
@@ -183,8 +187,15 @@ export function DataTable<T>({
             {!hideHeaderMenu && <col style={{ width: "44px" }} />}
           </colgroup>
 
-          <TableHeader>
-            <TableRow className="border-b border-default bg-[#E6EBF1] hover:bg-background-secondary">
+          <TableHeader
+            className={cn(stickyHeader && "sticky top-0 z-20 bg-[#E6EBF1]")}
+          >
+            <TableRow
+              className={cn(
+                "border-b border-default hover:bg-[#E6EBF1]",
+                stickyHeader && "bg-[#E6EBF1]",
+              )}
+            >
               {selectable && (
                 <TableHead className="px-4">
                   <Checkbox

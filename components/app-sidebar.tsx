@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ChevronDown, MenuIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 import {
   Sidebar,
@@ -79,7 +80,15 @@ function SidebarBrand() {
   );
 }
 
-function NavMenuItem({ item }: { item: NavItem }) {
+function NavMenuItem({
+  item,
+  openMenu,
+  setOpenMenu,
+}: {
+  item: NavItem;
+  openMenu: string | null;
+  setOpenMenu: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -103,7 +112,12 @@ function NavMenuItem({ item }: { item: NavItem }) {
 
   if (hasChildren) {
     return (
-      <Collapsible defaultOpen={isActive} className="group/collapsible w-full">
+      <Collapsible
+        open={openMenu === item.label}
+        onOpenChange={(open) => {
+          setOpenMenu(open ? item.label : null);
+        }}
+      >
         <SidebarMenuItem>
           <CollapsibleTrigger asChild>
             <SidebarMenuButton
@@ -234,6 +248,7 @@ export function AppSidebar({
   ...props
 }: AppSidebarProps & React.ComponentProps<typeof Sidebar>) {
   const { nav, bottom } = getNavByRole(role);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   return (
     <Sidebar
@@ -264,12 +279,17 @@ export function AppSidebar({
             <SidebarBrand />
           </SidebarHeader>
 
-          <SidebarContent className="bg-transparent">
+          <SidebarContent className="flex-1 overflow-y-auto bg-transparent">
             <SidebarGroup className="p-0">
               <SidebarGroupContent>
-                <SidebarMenu className="gap-3 px-0">
+                <SidebarMenu className="space-y-1 px-0 pb-6">
                   {nav.map((item) => (
-                    <NavMenuItem key={item.label} item={item} />
+                    <NavMenuItem
+                      key={item.label}
+                      item={item}
+                      openMenu={openMenu}
+                      setOpenMenu={setOpenMenu}
+                    />
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
@@ -280,7 +300,12 @@ export function AppSidebar({
             <SidebarGroupContent>
               <SidebarMenu className="gap-0 px-0">
                 {bottom?.map((item) => (
-                  <NavMenuItem key={item.label} item={item} />
+                  <NavMenuItem
+                    key={item.label}
+                    item={item}
+                    openMenu={openMenu}
+                    setOpenMenu={setOpenMenu}
+                  />
                 ))}
               </SidebarMenu>
             </SidebarGroupContent>
