@@ -1,134 +1,180 @@
 "use client";
 
 import * as React from "react";
-import { CheckCircle2 } from "lucide-react";
+import { useState, useMemo } from "react";
 
 import {
   DataTable,
   StatusPill,
-  ActionLink,
   type DataTableColumn,
 } from "@/components/data-table";
+import { TablePagination } from "@/components/table-pagination";
 
-type OrderStatus = "active" | "pending" | "cancelled";
+type OrderStatus = "delivered" | "prepared" | "pending";
 
 interface OrderRow {
   id: string;
-  contract: string;
-  createdAt: string;
-  dueAt: string;
-  totalAmount: string;
-  paidAmount: string;
+  orderNumber: string;
+  orderDate: string;
+  deliveryDate: string;
+  viewedDate: string;
+  branch: string;
+  supplier: string;
+  amount: string;
   status: OrderStatus;
 }
 
 const orders: OrderRow[] = [
   {
-    id: "ORD-1001",
-    contract: "#Order-1001",
-    createdAt: "2026/05/12",
-    dueAt: "2026/05/20",
-    totalAmount: "523,456,789₮",
-    paidAmount: "523,456,789₮",
-    status: "active",
+    id: "1",
+    orderNumber: "#12456",
+    orderDate: "2026/03/12",
+    deliveryDate: "2026/03/12",
+    viewedDate: "2026/03/12",
+    branch: "Салбарын нэр",
+    supplier: "Нийлүүлэгчийн нэр",
+    amount: "123,456,789₮",
+    status: "delivered",
   },
   {
-    id: "ORD-1002",
-    contract: "#Order-1002",
-    createdAt: "2026/05/12",
-    dueAt: "2026/05/20",
-    totalAmount: "412,000,000₮",
-    paidAmount: "0₮",
+    id: "2",
+    orderNumber: "#12457",
+    orderDate: "2026/03/13",
+    deliveryDate: "2026/03/14",
+    viewedDate: "2026/03/13",
+    branch: "Баянзүрх салбар",
+    supplier: "АПУ ХК",
+    amount: "89,000,000₮",
+    status: "prepared",
+  },
+  {
+    id: "3",
+    orderNumber: "#12458",
+    orderDate: "2026/03/14",
+    deliveryDate: "2026/03/15",
+    viewedDate: "2026/03/14",
+    branch: "Хан-Уул салбар",
+    supplier: "MCS Coca-Cola",
+    amount: "256,800,000₮",
     status: "pending",
   },
   {
-    id: "ORD-1003",
-    contract: "#Order-1003",
-    createdAt: "2026/05/10",
-    dueAt: "2026/05/18",
-    totalAmount: "98,750,000₮",
-    paidAmount: "98,750,000₮",
-    status: "active",
+    id: "4",
+    orderNumber: "#12459",
+    orderDate: "2026/03/15",
+    deliveryDate: "2026/03/16",
+    viewedDate: "2026/03/15",
+    branch: "Сүхбаатар салбар",
+    supplier: "Тэсо ХХК",
+    amount: "65,300,000₮",
+    status: "delivered",
   },
   {
-    id: "ORD-1004",
-    contract: "#Order-1004",
-    createdAt: "2026/05/08",
-    dueAt: "2026/05/15",
-    totalAmount: "215,300,000₮",
-    paidAmount: "0₮",
-    status: "cancelled",
-  },
-  {
-    id: "ORD-1005",
-    contract: "#Order-1005",
-    createdAt: "2026/05/07",
-    dueAt: "2026/05/14",
-    totalAmount: "60,120,000₮",
-    paidAmount: "40,000,000₮",
-    status: "pending",
+    id: "5",
+    orderNumber: "#12460",
+    orderDate: "2026/03/16",
+    deliveryDate: "2026/03/17",
+    viewedDate: "2026/03/16",
+    branch: "Чингэлтэй салбар",
+    supplier: "Номин Холдинг",
+    amount: "145,900,000₮",
+    status: "prepared",
   },
 ];
 
 const statusLabel: Record<
   OrderStatus,
-  { label: string; tone: "success" | "warning" | "error" }
+  {
+    label: string;
+    tone: "success" | "warning" | "info";
+  }
 > = {
-  active: { label: "Идэвхтэй", tone: "success" },
-  pending: { label: "Хүлээгдэж буй", tone: "warning" },
-  cancelled: { label: "Цуцлагдсан", tone: "error" },
+  delivered: {
+    label: "Хүргэлтэд гарсан",
+    tone: "warning",
+  },
+  prepared: {
+    label: "Захиалга бэлтгэгдэж байна",
+    tone: "info",
+  },
+  pending: {
+    label: "Хүлээгдэж байна",
+    tone: "success",
+  },
 };
 
 const orderColumns: DataTableColumn<OrderRow>[] = [
-  { key: "contract", header: "Гэрээ" },
-  { key: "createdAt", header: "Үүсгэсэн огноо" },
-  { key: "dueAt", header: "Дуусах огноо" },
-  { key: "totalAmount", header: "Нийт дүн", align: "right" },
-  { key: "paidAmount", header: "Төлсөн дүн", align: "right" },
+  {
+    key: "orderNumber",
+    header: "Захиалгын дугаар",
+  },
+  {
+    key: "orderDate",
+    header: "Захиалгын огноо",
+  },
+  {
+    key: "deliveryDate",
+    header: "Хүргэх огноо",
+  },
+  {
+    key: "viewedDate",
+    header: "Харсан огноо",
+  },
+  {
+    key: "branch",
+    header: "Салбар",
+  },
+  {
+    key: "supplier",
+    header: "Нийлүүлэгч",
+  },
+  {
+    key: "amount",
+    header: "Үнийн дүн",
+    align: "right",
+  },
   {
     key: "status",
     header: "Төлөв",
     render: (row) => {
       const { label, tone } = statusLabel[row.status];
+
       return <StatusPill tone={tone} label={label} />;
     },
-  },
-  {
-    key: "actions",
-    header: "",
-    align: "right",
-    render: (row) => (
-      <ActionLink onClick={() => console.log("Тохируулах:", row.id)}>
-        Тохируулах
-      </ActionLink>
-    ),
   },
 ];
 
 export default function OrdersPage() {
-  const [selectedIds, setSelectedIds] = React.useState<Set<string | number>>(
-    new Set(),
-  );
+  // const [selectedIds, setSelectedIds] = useState<Set<string | number>>(
+  //   new Set(),
+  // );
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const paginatedOrders = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return orders.slice(start, start + pageSize);
+  }, [orders, page, pageSize]);
+
   return (
     <div className="flex flex-col gap-6">
       <DataTable
         columns={orderColumns}
-        data={orders}
+        data={paginatedOrders}
         numbered
         getRowId={(row) => row.id}
-        selectable
-        selectedIds={selectedIds}
-        onSelectedIdsChange={setSelectedIds}
-        getRowBadge={(row) =>
-          row.status === "active" ? (
-            <CheckCircle2
-              className="ml-auto h-4 w-4 text-success"
-              strokeWidth={1.75}
-            />
-          ) : null
-        }
-        onHeaderMenuClick={() => console.log("Багана тохиргоо нээх")}
+        onHeaderMenuClick={() => console.log("Column settings")}
         emptyMessage="Захиалга олдсонгүй"
+      />
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalItems={orders.length}
+        onPageChange={setPage}
+        onPageSizeChange={(size) => {
+          setPageSize(size);
+          setPage(1);
+        }}
       />
     </div>
   );

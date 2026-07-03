@@ -4,10 +4,10 @@ import * as React from "react";
 import Image from "next/image";
 import {
   Calendar,
-  ChevronRight,
   FileText,
   MessageSquare,
-  ChevronLeft,
+  ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
@@ -127,7 +127,7 @@ function HeroCarousel() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative h-[420px] w-full sm:h-[560px] lg:h-[680px]">
+      <div className="relative h-[420px] w-full sm:h-[560px] lg:h-[410px]">
         {heroSlides.map((slide, index) => (
           <Image
             key={slide.id}
@@ -165,22 +165,33 @@ function HeroCarousel() {
         </div>
 
         <Button
-          type="submit"
+          type="button"
           aria-label="Өмнөх слайд"
+          variant="brandSecondary"
           onClick={goToPrev}
-          className="absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center sm:left-8"
+          className={cn(
+            "absolute left-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center sm:left-8",
+            "opacity-0 pointer-events-none transition-all duration-300",
+            "group-hover:opacity-100 group-hover:pointer-events-auto",
+            "hover:bg-black/40 hover:backdrop-blur-[2px]",
+          )}
         >
-          <ChevronLeft className="h-5 w-5" strokeWidth={2} />
+          <ArrowLeft className="h-5 w-5" strokeWidth={2} />
         </Button>
 
         <Button
-          type="submit"
-          variant="brandSecondary"
+          type="button"
           aria-label="Дараагийн слайд"
+          variant="brandSecondary"
           onClick={goToNext}
-          className="absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center sm:right-8"
+          className={cn(
+            "absolute right-4 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center sm:right-8",
+            "opacity-0 pointer-events-none transition-all duration-300",
+            "group-hover:opacity-100 group-hover:pointer-events-auto",
+            "hover:bg-black/40 hover:backdrop-blur-[2px]",
+          )}
         >
-          <ChevronRight className="h-5 w-5" strokeWidth={2} />
+          <ArrowRight className="h-5 w-5" strokeWidth={2} />
         </Button>
       </div>
 

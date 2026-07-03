@@ -72,7 +72,7 @@ const ORDERS_VIEW: NavItem = {
   icon: ClipboardList,
   children: [
     {
-      label: "Захиалга",
+      label: "Захиалга үзэх",
       href: "/orders",
     },
     {

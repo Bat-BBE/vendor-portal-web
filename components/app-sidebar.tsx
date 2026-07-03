@@ -89,15 +89,15 @@ function NavMenuItem({ item }: { item: NavItem }) {
     item.href === pathname || item.children?.some((c) => c.href === pathname);
 
   const rowClass = cn(
-    "flex items-center w-full py-3 text-[14px] leading-6 text-white transition-all duration-150 cursor-pointer select-none rounded-none h-auto",
-    collapsed ? "justify-center gap-0 px-0" : "gap-3 px-5",
+    "flex w-full items-center gap-3 px-5 py-3 text-[14px] leading-6 text-white transition-all duration-150 cursor-pointer select-none rounded-none h-auto",
     "hover:bg-white/10 hover:text-white",
-    isActive && "bg-white/10 border-l-4 border-white font-semibold text-white",
+    isActive &&
+      "bg-white/10 font-semibold text-white before:absolute before:left-0 before:top-0 before:w-1 before:bg-white",
   );
 
   const iconBox = (icon: NavItem["icon"]) => (
     <span className="flex h-6 w-6 shrink-0 items-center justify-center opacity-80">
-      {renderIcon(icon, collapsed ? 20 : 24)}
+      {renderIcon(icon, 24)}
     </span>
   );
 
@@ -108,7 +108,7 @@ function NavMenuItem({ item }: { item: NavItem }) {
           <CollapsibleTrigger asChild>
             <SidebarMenuButton
               tooltip={item.label}
-              className={cn(rowClass, !collapsed && "justify-between")}
+              className={cn(rowClass, "justify-between items-center")}
             >
               <div
                 className={cn(
@@ -117,9 +117,7 @@ function NavMenuItem({ item }: { item: NavItem }) {
                 )}
               >
                 {item.icon && iconBox(item.icon)}
-                {!collapsed && (
-                  <span className="text-[14px] truncate">{item.label}</span>
-                )}
+                {!collapsed && <span className="truncate">{item.label}</span>}
               </div>
               {!collapsed && (
                 <ChevronDown
@@ -130,7 +128,7 @@ function NavMenuItem({ item }: { item: NavItem }) {
             </SidebarMenuButton>
           </CollapsibleTrigger>
           {!collapsed && (
-            <CollapsibleContent>
+            <CollapsibleContent className="w-full">
               <SidebarMenuSub className="border-none ml-0 px-0 mt-0.5 space-y-0.5">
                 {item.children!.map((child) => {
                   const childActive = child.href === pathname;
@@ -139,7 +137,8 @@ function NavMenuItem({ item }: { item: NavItem }) {
                       <SidebarMenuSubButton
                         asChild
                         className={cn(
-                          "pl-8 text-[13px] font-normal text-white h-auto py-3",
+                          !collapsed &&
+                            "pl-10 w-full text-[13px] font-normal text-white h-auto py-3 rounded-none transition-all duration-150",
                           "hover:bg-white/10 hover:text-white",
                           childActive &&
                             "bg-white/10 border-l-4 border-white font-semibold text-white",
