@@ -30,8 +30,16 @@ export type UserRole =
   | "pharmacist"
   | "marketing_manager";
 
+export interface Company {
+  id: string;
+  name: string;
+}
+
 export interface AppSidebarProps {
   role: UserRole;
   brandName?: string;
   defaultCollapsed?: boolean;
+  companies?: Company[];
+  selectedCompanyId?: string;
+  onSelectCompany?: (companyId: string) => void;
 }

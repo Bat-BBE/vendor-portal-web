@@ -1,7 +1,7 @@
-import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { DashboardShell } from "@/components/layout/DashboardShell";
 import type { UserRole } from "@/models/sidebarModel";
+import type { Company } from "@/components/layout/company-selector";
 
 async function getCurrentUser() {
   return {
@@ -27,20 +27,36 @@ async function getCurrentUser() {
   };
 }
 
+async function getUserCompanies(): Promise<Company[]> {
+  return [
+    { id: "1", name: "Монос групп ХХК" },
+    { id: "2", name: "Монос Фарм ХХК" },
+    { id: "3", name: "Монос Трейд ХХК" },
+    { id: "4", name: "Монос Лоджистикс ХХК" },
+    { id: "5", name: "Монос Ритэйл ХХК" },
+  ];
+}
+
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
+  const [user, companies] = await Promise.all([
+    getCurrentUser(),
+    getUserCompanies(),
+  ]);
 
   return (
     <SidebarProvider>
-      <AppSidebar role={user.role} />
-      <SidebarInset>
-        <HeaderWrapper role={user.role} user={user} />
-        <main className="flex-1 overflow-y-auto px-2 py-1">{children}</main>
-      </SidebarInset>
+      <DashboardShell
+        role={user.role}
+        user={user}
+        companies={companies}
+        defaultCompanyId={companies[0]?.id ?? ""}
+      >
+        {children}
+      </DashboardShell>
     </SidebarProvider>
   );
 }

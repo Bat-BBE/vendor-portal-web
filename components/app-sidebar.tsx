@@ -31,6 +31,7 @@ import {
 
 import { getNavByRole } from "../config/nav.config";
 import { AppSidebarProps, NavItem } from "@/models/sidebarModel";
+import { CompanySelector } from "./layout/company-selector";
 
 function renderIcon(icon?: NavItem["icon"], size: number = 24) {
   if (!icon) return null;
@@ -98,10 +99,10 @@ function NavMenuItem({
     item.href === pathname || item.children?.some((c) => c.href === pathname);
 
   const rowClass = cn(
-    "flex w-full items-center gap-3 px-5 py-3 text-[14px] leading-6 text-white transition-all duration-150 cursor-pointer select-none rounded-none h-auto",
+    "relative flex w-full items-center gap-3 px-5 py-3 text-[14px] leading-6 text-white transition-all duration-150 cursor-pointer select-none rounded-none h-auto",
     "hover:bg-white/10 hover:text-white",
     isActive &&
-      "bg-white/10 font-semibold text-white before:absolute before:left-0 before:top-0 before:w-1 before:bg-white",
+      "bg-white/10 font-semibold text-white before:absolute before:left-0 before:h-full before:top-0 before:w-1 before:bg-white",
   );
 
   const iconBox = (icon: NavItem["icon"]) => (
@@ -245,10 +246,16 @@ function HoverExpandWrapper({ children }: { children: React.ReactNode }) {
 
 export function AppSidebar({
   role,
+  companies,
+  selectedCompanyId,
+  onSelectCompany,
   ...props
 }: AppSidebarProps & React.ComponentProps<typeof Sidebar>) {
   const { nav, bottom } = getNavByRole(role);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const companiesValue = companies ?? [];
+  const { state } = useSidebar();
+  const collapsed_state = state === "collapsed";
 
   return (
     <Sidebar
@@ -278,6 +285,19 @@ export function AppSidebar({
           <SidebarHeader className="p-0 bg-transparent">
             <SidebarBrand />
           </SidebarHeader>
+          {!collapsed_state ? (
+            role === "system_admin" &&
+            companiesValue.length > 0 &&
+            selectedCompanyId &&
+            onSelectCompany ? (
+              <CompanySelector
+                companies={companiesValue}
+                selectedCompanyId={selectedCompanyId}
+                onSelectCompany={onSelectCompany}
+                className="mb-4 mx-2"
+              />
+            ) : null
+          ) : null}
 
           <SidebarContent className="flex-1 overflow-y-auto bg-transparent">
             <SidebarGroup className="p-0">

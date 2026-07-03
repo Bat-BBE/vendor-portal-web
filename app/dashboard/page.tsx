@@ -123,7 +123,7 @@ function HeroCarousel() {
 
   return (
     <div
-      className="group relative w-full max-w-[1007px] overflow-hidden rounded-xl border border-default bg-background-tertiary"
+      className="group relative w-full overflow-hidden rounded-xl border border-default bg-background-tertiary"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

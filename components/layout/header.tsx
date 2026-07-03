@@ -67,7 +67,19 @@ function NotificationPopover({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
-          className="relative w-12 h-12 flex items-center justify-center rounded-lg hover:bg-background-secondary transition-colors cursor-pointer"
+          className="
+          relative
+          flex
+          items-center
+          justify-center
+          rounded-lg
+          transition-colors
+
+          h-10 w-10
+          lg:h-12 lg:w-12
+
+          hover:bg-background-secondary
+          "
           aria-label="Мэдэгдлүүд"
         >
           <Bell size={22} className="text-foreground" />
@@ -201,7 +213,7 @@ function ProfilePopover({
           aria-label="Хэрэглэгч"
         >
           <UserAvatar name={userName} src={userAvatar} size={28} />
-          <span className="text-[13px] font-semibold text-foreground-secondary hidden sm:block max-w-[120px] truncate">
+          <span className="text-[13px] font-semibold text-foreground-secondary hidden md:block max-w-[120px] lg:max-w-[180px] xl:max-w-[240px] truncate">
             {userName}
           </span>
           <ChevronDown
@@ -324,13 +336,18 @@ export function Header({
   return (
     <header
       className={cn(
-        "flex shrink-0 items-center justify-between gap-8 bg-background px-10 py-6",
+        "flex shrink-0 items-center justify-between bg-background",
+        "gap-2 sm:gap-4 lg:gap-8",
+        "px-4 sm:px-6 lg:px-8 xl:px-10",
+        "py-3 lg:py-6",
         className,
       )}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-4">
+      <div className="flex min-w-0 flex-1 items-center gap-2 lg:gap-4 overflow-hidden">
         <SidebarTrigger className="-ml-1 shrink-0 cursor-pointer" />
-        <HeaderBreadcrumb items={breadcrumbs} />
+        <div className="min-w-0 flex-1 overflow-hidden">
+          <HeaderBreadcrumb items={breadcrumbs} />
+        </div>
       </div>
 
       <div className="flex items-center gap-4 shrink-0">

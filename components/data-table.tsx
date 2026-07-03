@@ -10,11 +10,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export type DataTableAlign = "left" | "center" | "right";
 
@@ -46,6 +46,7 @@ export interface DataTableProps<T> {
   className?: string;
   maxWidth?: number | string;
   stickyHeader?: boolean;
+  footer?: (data: T[]) => React.ReactNode;
 }
 
 const statusPillTone = {
@@ -128,6 +129,7 @@ export function DataTable<T>({
   emptyMessage = "Мэдээлэл олдсонгүй",
   className,
   stickyHeader = false,
+  footer,
 }: DataTableProps<T>) {
   const isControlled = selectedIds !== undefined && !!onSelectedIdsChange;
   const [internalSelected, setInternalSelected] = React.useState<
@@ -321,6 +323,7 @@ export function DataTable<T>({
               })
             )}
           </TableBody>
+          {footer && <TableFooter>{footer(data)}</TableFooter>}
         </Table>
       </div>
     </div>
