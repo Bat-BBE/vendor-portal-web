@@ -11,5 +11,5 @@ export const filterParsers = {
   from: parseAsIsoDate,
   to: parseAsIsoDate,
   columns: parseAsArrayOf(parseAsString).withDefault([]),
-  q: parseAsString.withDefault(""),
+  search: parseAsString.withDefault(""),
 };

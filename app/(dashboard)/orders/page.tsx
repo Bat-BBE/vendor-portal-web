@@ -152,12 +152,18 @@ const orderColumns: DataTableColumn<OrderRow>[] = [
   },
 ];
 
+const ORDER_TABS = [
+  { value: "active", label: "Идэвхтэй захиалга" },
+  { value: "history", label: "Захиалгын түүх" },
+];
+
 export default function OrdersPage() {
   // const [selectedIds, setSelectedIds] = useState<Set<string | number>>(
   //   new Set(),
   // );
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [activeTab, setActiveTab] = useState("active");
 
   const paginatedOrders = useMemo(() => {
     const start = (page - 1) * pageSize;
@@ -169,13 +175,15 @@ export default function OrdersPage() {
   };
 
   const handleDownload = async () => {
-    console.log("татаж байна...");
-    // жишээ нь: CSV/Excel export API дуудах
+    console.log("tataj avch baina aa .. ");
   };
 
   return (
     <div className="flex h-auto min-h-0 flex-col gap-6">
       <FilterBar
+        tabs={ORDER_TABS}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
         search={true}
         columnOptions={PAYMENTS_COLUMN_OPTIONS}
         showYearFilter={true}

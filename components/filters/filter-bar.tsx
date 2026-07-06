@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { useQueryStates } from "nuqs";
-import {
-  Search,
-  RefreshCw,
-  SlidersHorizontal,
-  Paperclip,
-  Funnel,
-} from "lucide-react";
+import { Search, RefreshCw, Paperclip, Funnel } from "lucide-react";
 
 import { filterParsers } from "@/lib/filter-params";
 import { PeriodFilter, type PeriodFilterValue } from "./period-filter";
@@ -16,8 +10,17 @@ import { ChecklistFilter, type FilterOption } from "./checklist-filter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export interface FilterTabOption {
+  value: string;
+  label: string;
+}
 
 interface FilterBarProps {
+  tabs?: FilterTabOption[];
+  activeTab?: string;
+  onTabChange?: (value: string) => void;
   columnOptions: FilterOption[];
   showYearFilter?: boolean;
   search?: boolean;
@@ -26,6 +29,9 @@ interface FilterBarProps {
 }
 
 export function FilterBar({
+  tabs,
+  activeTab,
+  onTabChange,
   search = true,
   columnOptions,
   showYearFilter = true,
@@ -35,9 +41,11 @@ export function FilterBar({
   const [filters, setFilters] = useQueryStates(filterParsers, {
     shallow: false,
   });
-  const [searchValue, setSearchValue] = useState(filters.q ?? "");
+  const [searchValue, setSearchValue] = useState(filters.search ?? "");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+
+  const hasTabs = Boolean(tabs && tabs.length > 0);
 
   const periodValue: PeriodFilterValue =
     filters.from && filters.to
@@ -51,6 +59,23 @@ export function FilterBar({
           year: filters.year,
           month: filters.month ?? new Date().getMonth() + 1,
         };
+
+  function handlePeriodChange(v: PeriodFilterValue) {
+    if (v.mode === "month") {
+      setFilters({ year: v.year, month: v.month, from: null, to: null });
+    } else {
+      setFilters({
+        from: v.from ?? null,
+        to: v.to ?? null,
+        year: null,
+        month: null,
+      });
+    }
+  }
+
+  function handlePeriodClear() {
+    setFilters({ year: null, month: null, from: null, to: null });
+  }
 
   async function handleRefresh() {
     setIsRefreshing(true);
@@ -73,18 +98,34 @@ export function FilterBar({
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="flex flex-1 items-center gap-8">
+      <div className="flex flex-1 items-center gap-4">
+        {hasTabs && (
+          <Tabs value={activeTab} onValueChange={onTabChange}>
+            <TabsList className="grid w-full grid-cols-2 gap-1 bg-[#E6EBF1] p-1">
+              {tabs!.map((opt) => (
+                <TabsTrigger
+                  key={opt.value}
+                  value={opt.value}
+                  className="p-2 font-medium data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                >
+                  {opt.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        )}
+
         {search && (
-          <div className="relative w-full max-w-86">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="relative w-full max-w-[280px]">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground" />
             <Input
               value={searchValue}
               onChange={(e) => {
                 setSearchValue(e.target.value);
-                setFilters({ q: e.target.value || null });
+                setFilters({ search: e.target.value || null });
               }}
               placeholder="Хайх"
-              className="pl-9"
+              className="pl-9 bg-white"
             />
           </div>
         )}
@@ -92,23 +133,8 @@ export function FilterBar({
         {showYearFilter && (
           <PeriodFilter
             value={periodValue}
-            onChange={(v) => {
-              if (v.mode === "month") {
-                setFilters({
-                  year: v.year,
-                  month: v.month,
-                  from: null,
-                  to: null,
-                });
-              } else {
-                setFilters({
-                  from: v.from ?? null,
-                  to: v.to ?? null,
-                  year: null,
-                  month: null,
-                });
-              }
-            }}
+            onChange={handlePeriodChange}
+            onClear={handlePeriodClear}
           />
         )}
       </div>
@@ -119,7 +145,7 @@ export function FilterBar({
           variant="ghost"
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="flex items-center gap-2 text-sm text-foreground-secondary transition-colors hover:text-foreground disabled:opacity-50"
+          className="flex items-center gap-2 bg-white px-3 py-5 text-sm text-foreground transition-colors"
         >
           Шинэчлэх
           <RefreshCw
@@ -136,7 +162,7 @@ export function FilterBar({
             <Button
               type="button"
               variant="ghost"
-              className="flex items-center gap-2 text-sm text-foreground-secondary transition-colors hover:text-foreground"
+              className="flex items-center gap-2 bg-white px-3 py-5 text-sm text-foreground transition-colors"
             >
               Шүүлтүүр
               <Funnel className="h-4 w-4" />
