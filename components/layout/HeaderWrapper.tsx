@@ -28,11 +28,23 @@ interface HeaderWrapperProps {
   onSelectCompany?: (companyId: string) => void;
 }
 
-function findActivePath(items: NavItem[], pathname: string): NavItem[] | null {
+function findActivePath(
+  items: NavItem[],
+  bottom: NavItem[],
+  pathname: string,
+): NavItem[] | null {
   for (const item of items) {
     if (item.href === pathname) return [item];
     if (item.children) {
-      const childPath = findActivePath(item.children, pathname);
+      const childPath = findActivePath(item.children, [], pathname);
+      if (childPath) return [item, ...childPath];
+    }
+  }
+  for (const item of bottom) {
+    if (item.href === pathname) return [item];
+
+    if (item.children) {
+      const childPath = findActivePath(item.children, [], pathname);
       if (childPath) return [item, ...childPath];
     }
   }
@@ -56,9 +68,9 @@ export function HeaderWrapper({
   onSelectCompany,
 }: HeaderWrapperProps) {
   const pathname = usePathname();
-  const { nav } = getNavByRole(role);
+  const { nav, bottom } = getNavByRole(role);
 
-  const activePath = findActivePath(nav, pathname) ?? [];
+  const activePath = findActivePath(nav, bottom, pathname) ?? [];
   const breadcrumbs = buildBreadcrumbs(activePath);
 
   return (

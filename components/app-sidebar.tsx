@@ -316,7 +316,7 @@ export function AppSidebar({
             </SidebarGroup>
           </SidebarContent>
 
-          <SidebarGroup className="mt-auto p-1 pb-5">
+          <SidebarGroup className="mt-auto m-0 p-0 pb-5">
             <SidebarGroupContent>
               <SidebarMenu className="gap-0 px-0">
                 {bottom?.map((item) => (

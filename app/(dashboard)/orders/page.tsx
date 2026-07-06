@@ -9,6 +9,8 @@ import {
   type DataTableColumn,
 } from "@/components/data-table";
 import { TablePagination } from "@/components/table-pagination";
+import { FilterBar } from "@/components/filters/filter-bar";
+import { type FilterOption } from "@/components/filters/checklist-filter";
 
 type OrderStatus = "delivered" | "prepared" | "pending";
 
@@ -23,6 +25,12 @@ interface OrderRow {
   amount: string;
   status: OrderStatus;
 }
+
+const PAYMENTS_COLUMN_OPTIONS: FilterOption[] = [
+  { value: "debit", label: "Дебит" },
+  { value: "credit", label: "Кредит" },
+  { value: "keyword", label: "Гүйлгээт үгтэй" },
+];
 
 const orders: OrderRow[] = [
   {
@@ -156,8 +164,24 @@ export default function OrdersPage() {
     return orders.slice(start, start + pageSize);
   }, [orders, page, pageSize]);
 
+  const refresh = async function onClickRefresh() {
+    console.log("hello refresh hiisen");
+  };
+
+  const handleDownload = async () => {
+    console.log("татаж байна...");
+    // жишээ нь: CSV/Excel export API дуудах
+  };
+
   return (
     <div className="flex h-auto min-h-0 flex-col gap-6">
+      <FilterBar
+        search={true}
+        columnOptions={PAYMENTS_COLUMN_OPTIONS}
+        showYearFilter={true}
+        refresh={refresh}
+        onDownload={handleDownload}
+      />
       <div className="flex-1 min-h-0">
         <DataTable
           columns={orderColumns}

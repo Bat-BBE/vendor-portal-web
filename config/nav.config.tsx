@@ -4,7 +4,6 @@ import {
   Settings,
   MapPin,
   Bell,
-  FileText,
   TvMinimal,
   Wallet,
   ClipboardList,
@@ -16,7 +15,12 @@ import {
 } from "lucide-react";
 
 const COMMON_BOTTOM: NavItem[] = [
-  { label: "Тусламж", href: "/help", icon: CircleCheck },
+  {
+    label: "Тусламж",
+    href: "/help",
+    icon: CircleCheck,
+    description: "Системтийн ажилгаатай холбоотой заавар зөвөлгөө",
+  },
   { label: "Салбарын байршил", href: "/branches", icon: MapPin },
   { label: "Санал хүсэлт", href: "/feedback", icon: CircleAlert },
   { label: "Холбоо барих", href: "/contact", icon: MessageCircle },

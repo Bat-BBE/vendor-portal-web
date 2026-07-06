@@ -21,7 +21,7 @@ async function getCurrentUser() {
         avatarText: "A",
         message: "System update completed successfully",
         time: "1 hour ago",
-        read: true,
+        read: false,
       },
     ],
   };
@@ -29,6 +29,7 @@ async function getCurrentUser() {
 
 async function getUserCompanies(): Promise<Company[]> {
   return [
+    { id: "0", name: "Testing ХХК" },
     { id: "1", name: "Монос групп ХХК" },
     { id: "2", name: "Монос Фарм ХХК" },
     { id: "3", name: "Монос Трейд ХХК" },
