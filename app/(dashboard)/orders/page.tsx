@@ -11,6 +11,9 @@ import {
 import { TablePagination } from "@/components/table-pagination";
 import { FilterBar } from "@/components/filters/filter-bar";
 import { type FilterOption } from "@/components/filters/checklist-filter";
+import { Eye } from "lucide-react";
+import { OrderDetailsDialog } from "@/components/order-details-dialog";
+import { Button } from "@/components/ui/button";
 
 type OrderStatus = "delivered" | "prepared" | "pending";
 
@@ -161,6 +164,7 @@ export default function OrdersPage() {
   // const [selectedIds, setSelectedIds] = useState<Set<string | number>>(
   //   new Set(),
   // );
+  const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState("active");
@@ -179,7 +183,7 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="flex h-auto min-h-0 flex-col gap-6">
+    <div className="flex h-auto min-h-0 min-w-0 flex-col gap-6">
       <FilterBar
         tabs={ORDER_TABS}
         activeTab={activeTab}
@@ -190,13 +194,28 @@ export default function OrdersPage() {
         refresh={refresh}
         onDownload={handleDownload}
       />
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 min-w-0">
         <DataTable
           columns={orderColumns}
           data={paginatedOrders}
           numbered
           getRowId={(row) => row.id}
           onHeaderMenuClick={() => console.log("Column settings")}
+          getRowBadge={(row) => (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-foreground-tertiary hover:text-foreground"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedOrder(row);
+              }}
+              aria-label="Дэлгэрэнгүй харах"
+            >
+              <Eye className="h-6 w-6" strokeWidth={1.75} />
+            </Button>
+          )}
           stickyHeader
           emptyMessage="Захиалга олдсонгүй"
         />
@@ -210,6 +229,11 @@ export default function OrdersPage() {
           setPageSize(size);
           setPage(1);
         }}
+      />
+      <OrderDetailsDialog
+        order={selectedOrder}
+        open={!!selectedOrder}
+        onOpenChange={(open) => !open && setSelectedOrder(null)}
       />
     </div>
   );

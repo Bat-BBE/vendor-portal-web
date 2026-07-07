@@ -171,11 +171,11 @@ export function DataTable<T>({
   return (
     <div
       className={cn(
-        "flex h-full min-h-0 w-full flex-col overflow-hidden rounded-xl border border-default bg-background",
+        "flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden rounded-xl border border-default bg-background",
         className,
       )}
     >
-      <div className="sidebar-scroll h-full w-full overflow-auto">
+      <div className="sidebar-scroll h-full overflow-auto">
         <Table className="min-w-max">
           <colgroup>
             {selectable && <col style={{ width: "44px" }} />}
@@ -271,7 +271,7 @@ export function DataTable<T>({
                       onRowClick ? () => onRowClick(row, index) : undefined
                     }
                     className={cn(
-                      "border-b border-subtle last:border-b-0",
+                      "group border-b border-subtle last:border-b-0",
                       onRowClick && "cursor-pointer",
                       isHighlighted
                         ? "bg-accent"
@@ -314,8 +314,10 @@ export function DataTable<T>({
                       </TableCell>
                     ))}
                     {!hideHeaderMenu && (
-                      <TableCell className="px-2 text-right">
-                        {getRowBadge?.(row, index)}
+                      <TableCell className="px-3 text-right">
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                          {getRowBadge?.(row, index)}
+                        </span>
                       </TableCell>
                     )}
                   </TableRow>

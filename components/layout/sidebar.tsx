@@ -37,9 +37,7 @@ function NavRow({
 
   const rowClass = cn(
     "flex items-center gap-2 w-full px-5 py-3 text-[14px] leading-6 text-background transition-all duration-150 cursor-pointer select-none group",
-
     depth > 0 && "pl-8 text-[13px] font-normal",
-
     isActive
       ? "bg-background/10 border-l-4 border-white font-semibold"
       : "hover:bg-white/10",
@@ -122,7 +120,7 @@ export function Sidebar({
           <Image
             src="/assets/logo.svg"
             alt="logo"
-            width={75}
+            width={80}
             height={23}
             className="object-contain shrink-0 pb-1"
           />
