@@ -97,59 +97,85 @@ export function FilterBar({
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="flex flex-1 items-center gap-4">
+    <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
         {hasTabs && (
-          <Tabs value={activeTab} onValueChange={onTabChange}>
-            <TabsList className="grid w-full grid-cols-2 gap-1 bg-[#E6EBF1] p-1">
-              {tabs!.map((opt) => (
-                <TabsTrigger
-                  key={opt.value}
-                  value={opt.value}
-                  className="p-2 font-medium data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-none"
-                >
-                  {opt.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+          <div className="shrink-0 overflow-x-auto">
+            <Tabs value={activeTab} onValueChange={onTabChange}>
+              <TabsList className="inline-flex h-auto rounded-xl bg-[#E6EBF1] p-1">
+                {tabs!.map((opt) => (
+                  <TabsTrigger
+                    key={opt.value}
+                    value={opt.value}
+                    className="
+                    whitespace-nowrap
+                    rounded-lg
+                    px-3
+                    py-2
+                    text-sm
+                    font-medium
+                    transition-all
+                    data-[state=active]:bg-white
+                    data-[state=active]:text-foreground
+                    data-[state=active]:shadow-none
+                  "
+                  >
+                    {opt.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
         )}
 
         {search && (
-          <div className="relative w-full max-w-[280px]">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground" />
+          <div className="relative w-full min-w-[180px] flex-1 sm:max-w-[260px]">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
             <Input
               value={searchValue}
               onChange={(e) => {
                 setSearchValue(e.target.value);
-                setFilters({ search: e.target.value || null });
+                setFilters({
+                  search: e.target.value || null,
+                });
               }}
               placeholder="Хайх"
-              className="pl-9 bg-white"
+              className="h-11 rounded-xl bg-white pl-10"
             />
           </div>
         )}
 
         {showYearFilter && (
-          <PeriodFilter
-            value={periodValue}
-            onChange={handlePeriodChange}
-            onClear={handlePeriodClear}
-          />
+          <div className="w-full sm:w-auto shrink-0">
+            <PeriodFilter
+              value={periodValue}
+              onChange={handlePeriodChange}
+              onClear={handlePeriodClear}
+            />
+          </div>
         )}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center justify-start gap-2 xl:justify-end">
         <Button
           type="button"
           variant="ghost"
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="flex items-center gap-2 bg-white px-3 py-5 text-sm text-foreground transition-colors"
+          className="
+          h-10
+          shrink-0
+          rounded-xl
+          bg-white
+          px-4
+          py-6
+        "
         >
-          Шинэчлэх
+          <span>Шинэчлэх</span>
+
           <RefreshCw
-            className={cn("h-4 w-4", isRefreshing && "animate-spin")}
+            className={cn("ml-2 h-4 w-4", isRefreshing && "animate-spin")}
           />
         </Button>
 
@@ -162,10 +188,18 @@ export function FilterBar({
             <Button
               type="button"
               variant="ghost"
-              className="flex items-center gap-2 bg-white px-3 py-5 text-sm text-foreground transition-colors"
+              className="
+              h-10
+              shrink-0
+              rounded-xl
+              bg-white
+              px-4
+              py-6
+            "
             >
-              Шүүлтүүр
-              <Funnel className="h-4 w-4" />
+              <span>Шүүлтүүр</span>
+
+              <Funnel className="ml-2 h-4 w-4" />
             </Button>
           }
         />
@@ -175,10 +209,17 @@ export function FilterBar({
           variant="brandSecondary"
           onClick={handleDownload}
           disabled={isDownloading}
-          className="gap-3 rounded-3xl px-6 py-5 text-[13px]"
+          className="
+          h-10
+          shrink-0
+          rounded-xl
+          px-5
+          py-5
+        "
         >
-          Татах
-          <Paperclip className="h-3 w-3" />
+          <span>Татах</span>
+
+          <Paperclip className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>

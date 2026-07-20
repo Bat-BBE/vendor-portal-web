@@ -175,7 +175,7 @@ export function DataTable<T>({
         className,
       )}
     >
-      <div className="sidebar-scroll h-full overflow-auto">
+      <div className="sidebar-scroll h-full w-full overflow-x-auto overflow-y-auto">
         <Table className="min-w-max">
           <colgroup>
             {selectable && <col style={{ width: "44px" }} />}

@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { StatusPill } from "@/components/data-table";
 import { DataTable, type DataTableColumn } from "@/components/data-table";

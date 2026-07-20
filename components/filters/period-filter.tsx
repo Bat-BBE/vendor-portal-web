@@ -152,17 +152,32 @@ export function PeriodFilter({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          size="lg"
-          className="flex w-[280px] items-center justify-between gap-2 rounded-xl bg-white py-2 pl-3 pr-2"
+          className="
+          flex
+          w-full
+          min-w-[180px]
+          max-w-full
+          sm:w-auto
+          sm:min-w-[180px]
+          sm:max-w-[280px]
+          items-center
+          justify-between
+          gap-3
+          rounded-xl
+          bg-white
+          px-3
+          py-5.5
+        "
         >
-          <span className="flex items-center gap-2">
-            <CalendarIcon className="h-4 w-4 shrink-0" />
-            {getTriggerLabel(value, label)}
+          <span className="flex min-w-0 items-center gap-2">
+            <CalendarIcon className="h-6 w-6 shrink-0" />
+            <span className="truncate">{getTriggerLabel(value, label)}</span>
           </span>
+
           <ChevronDown
             size={13}
             className={cn(
-              "text-[#898989] transition-transform duration-150",
+              "shrink-0 text-[#898989] transition-transform duration-150",
               open && "rotate-180",
             )}
           />
@@ -178,13 +193,13 @@ export function PeriodFilter({
             <TabsList className="grid w-full grid-cols-2 bg-[#E6EBF1]">
               <TabsTrigger
                 value="month"
-                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm py-2 cursor-pointer"
+                className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm py-1 cursor-pointer"
               >
                 Сараар
               </TabsTrigger>
               <TabsTrigger
                 value="range"
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-foreground py-2 cursor-pointer"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-foreground py-1 cursor-pointer"
               >
                 Өдрөөр
               </TabsTrigger>
@@ -231,7 +246,7 @@ export function PeriodFilter({
                         disabled={isFuture}
                         onClick={() => setDraftYear(y)}
                         className={cn(
-                          "rounded-md py-1.5 text-sm transition-colors",
+                          "rounded-md py-1 text-sm transition-colors",
                           isFuture &&
                             "cursor-not-allowed text-muted-foreground/40 hover:bg-transparent",
                           !isFuture &&
@@ -263,7 +278,7 @@ export function PeriodFilter({
                         disabled={isFuture}
                         onClick={() => setDraftMonth(m)}
                         className={cn(
-                          "rounded-md py-1.5 text-sm transition-colors",
+                          "rounded-md py-1 text-sm transition-colors",
                           isFuture &&
                             "cursor-not-allowed text-muted-foreground/40 hover:bg-transparent",
                           !isFuture &&
@@ -328,7 +343,7 @@ export function PeriodFilter({
           <Button
             variant="brandSecondary"
             size="sm"
-            className="flex-1 rounded-full px-2 py-5 cursor-pointer"
+            className="flex-1 rounded-full px-2 py-4 cursor-pointer"
             onClick={handleApply}
           >
             Шүүх

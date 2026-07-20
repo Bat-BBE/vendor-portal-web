@@ -49,7 +49,9 @@ export function DashboardShell({
       />
       <SidebarInset>
         <HeaderWrapper role={role} user={user} />
-        <main className="flex-1 overflow-y-auto px-2 py-1">{children}</main>
+        <main className="flex-1 min-w-0 overflow-y-auto px-2 py-1">
+          {children}
+        </main>
       </SidebarInset>
     </>
   );
