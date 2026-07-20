@@ -21,10 +21,10 @@ interface FilterBarProps {
   tabs?: FilterTabOption[];
   activeTab?: string;
   onTabChange?: (value: string) => void;
-  columnOptions: FilterOption[];
+  columnOptions?: FilterOption[];
   showYearFilter?: boolean;
   search?: boolean;
-  refresh: () => void | Promise<void>;
+  refresh?: () => void | Promise<void>;
   onDownload?: () => void | Promise<void>;
 }
 
@@ -78,6 +78,7 @@ export function FilterBar({
   }
 
   async function handleRefresh() {
+    if (!refresh) return;
     setIsRefreshing(true);
     try {
       await refresh();
@@ -158,12 +159,13 @@ export function FilterBar({
       </div>
 
       <div className="flex flex-wrap items-center justify-start gap-2 xl:justify-end">
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className="
+        {refresh && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="
           h-10
           shrink-0
           rounded-xl
@@ -171,24 +173,26 @@ export function FilterBar({
           px-4
           py-6
         "
-        >
-          <span>Шинэчлэх</span>
+          >
+            <span>Шинэчлэх</span>
 
-          <RefreshCw
-            className={cn("ml-2 h-4 w-4", isRefreshing && "animate-spin")}
-          />
-        </Button>
+            <RefreshCw
+              className={cn("ml-2 h-4 w-4", isRefreshing && "animate-spin")}
+            />
+          </Button>
+        )}
 
-        <ChecklistFilter
-          label="Шүүлтүүр"
-          options={columnOptions}
-          selected={filters.columns}
-          onApply={(columns) => setFilters({ columns })}
-          trigger={
-            <Button
-              type="button"
-              variant="ghost"
-              className="
+        {columnOptions && (
+          <ChecklistFilter
+            label="Шүүлтүүр"
+            options={columnOptions}
+            selected={filters.columns}
+            onApply={(columns) => setFilters({ columns })}
+            trigger={
+              <Button
+                type="button"
+                variant="ghost"
+                className="
               h-10
               shrink-0
               rounded-xl
@@ -196,31 +200,34 @@ export function FilterBar({
               px-4
               py-6
             "
-            >
-              <span>Шүүлтүүр</span>
+              >
+                <span>Шүүлтүүр</span>
 
-              <Funnel className="ml-2 h-4 w-4" />
-            </Button>
-          }
-        />
+                <Funnel className="ml-2 h-4 w-4" />
+              </Button>
+            }
+          />
+        )}
 
-        <Button
-          type="button"
-          variant="brandSecondary"
-          onClick={handleDownload}
-          disabled={isDownloading}
-          className="
+        {onDownload && (
+          <Button
+            type="button"
+            variant="brandSecondary"
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="
           h-10
           shrink-0
           rounded-xl
           px-5
           py-5
         "
-        >
-          <span>Татах</span>
+          >
+            <span>Татах</span>
 
-          <Paperclip className="ml-2 h-4 w-4" />
-        </Button>
+            <Paperclip className="ml-2 h-4 w-4" />
+          </Button>
+        )}
       </div>
     </div>
   );

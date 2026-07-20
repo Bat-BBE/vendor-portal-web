@@ -18,6 +18,14 @@ import { cn } from "@/lib/utils";
 
 export type DataTableAlign = "left" | "center" | "right";
 
+export interface DataTableColumnGroup {
+  key: string;
+  header: React.ReactNode;
+  columnKeys: string[];
+  className?: string;
+  columnGroups?: DataTableColumnGroup[];
+}
+
 export interface DataTableColumn<T> {
   key: string;
   header: React.ReactNode;
@@ -31,6 +39,7 @@ export interface DataTableColumn<T> {
 export interface DataTableProps<T> {
   columns: DataTableColumn<T>[];
   data: T[];
+  columnGroups?: DataTableColumnGroup[];
   getRowId?: (row: T, index: number) => string | number;
   numbered?: boolean;
   selectable?: boolean;
@@ -115,6 +124,7 @@ export function ActionLink({
 export function DataTable<T>({
   columns,
   data,
+  columnGroups,
   getRowId = (_row, index) => index,
   numbered = false,
   selectable = false,
@@ -132,6 +142,9 @@ export function DataTable<T>({
   footer,
 }: DataTableProps<T>) {
   const isControlled = selectedIds !== undefined && !!onSelectedIdsChange;
+  const hasGroups = !!columnGroups && columnGroups.length > 0;
+  const groupOfColumn = (key: string) =>
+    columnGroups?.find((g) => g.columnKeys.includes(key));
   const [internalSelected, setInternalSelected] = React.useState<
     Set<string | number>
   >(() => new Set());
@@ -192,6 +205,140 @@ export function DataTable<T>({
           <TableHeader
             className={cn(stickyHeader && "sticky top-0 z-20 bg-[#E6EBF1]")}
           >
+            {hasGroups && (
+              <TableRow
+                className={cn(
+                  "border-b border-subtle hover:bg-[#E6EBF1]",
+                  stickyHeader && "bg-[#E6EBF1]",
+                )}
+              >
+                {selectable && <TableHead rowSpan={2} className="px-4" />}
+                {numbered && (
+                  <TableHead
+                    rowSpan={2}
+                    className="caption-1-bold px-4 text-foreground font-semibold"
+                  >
+                    №
+                  </TableHead>
+                )}
+                {columns.map((column) => {
+                  const group = groupOfColumn(column.key);
+                  if (group) {
+                    if (group.columnKeys[0] !== column.key) return null;
+                    return (
+                      <TableHead
+                        key={group.key}
+                        colSpan={group.columnKeys.length}
+                        className={cn(
+                          "caption-1-bold px-4 text-center text-foreground font-semibold border-x border-[#C9D8E7]",
+                          group.className,
+                        )}
+                      >
+                        {group.header}
+                      </TableHead>
+                    );
+                  }
+                  return (
+                    <TableHead
+                      key={column.key}
+                      rowSpan={2}
+                      className={cn(
+                        "caption-1-bold px-4 text-foreground font-semibold",
+                        column.align === "center" && "text-center",
+                        column.align === "right" && "text-right",
+                        column.headerClassName,
+                      )}
+                    >
+                      {column.header}
+                    </TableHead>
+                  );
+                })}
+                {!hideHeaderMenu && (
+                  <TableHead
+                    rowSpan={2}
+                    className="px-2 text-right align-middle"
+                  >
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-foreground"
+                      onClick={onHeaderMenuClick}
+                      aria-label="Багана тохиргоо"
+                    >
+                      <Menu className="h-4 w-4" strokeWidth={1.75} />
+                    </Button>
+                  </TableHead>
+                )}
+              </TableRow>
+            )}
+            <TableRow
+              className={cn(
+                "border-b border-default hover:bg-[#E6EBF1]",
+                stickyHeader && "bg-[#E6EBF1]",
+              )}
+            >
+              {selectable && (
+                <TableHead className="px-4">
+                  <Checkbox
+                    checked={
+                      allSelected
+                        ? true
+                        : someSelected
+                          ? "indeterminate"
+                          : false
+                    }
+                    onCheckedChange={toggleAll}
+                    aria-label="Бүгдийг сонгох"
+                  />
+                </TableHead>
+              )}
+              {!hasGroups && numbered && (
+                <TableHead className="caption-1-bold px-4 text-foreground font-semibold">
+                  №
+                </TableHead>
+              )}
+              {columns.map((column) => {
+                const group = groupOfColumn(column.key);
+                if (hasGroups && !group) return null;
+                return (
+                  <TableHead
+                    key={column.key}
+                    className={cn(
+                      "caption-1-bold px-4 text-foreground font-semibold",
+                      group && "border-x border-t border-[#C9D8E7]",
+                      column.align === "center" && "text-center",
+                      column.align === "right" && "text-right",
+                      column.headerClassName,
+                    )}
+                  >
+                    {column.header}
+                  </TableHead>
+                );
+              })}
+              {!hideHeaderMenu && !hasGroups && (
+                <TableHead
+                  rowSpan={hasGroups ? 2 : 1}
+                  className="px-2 text-right align-middle"
+                >
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-foreground"
+                    onClick={onHeaderMenuClick}
+                    aria-label="Багана тохиргоо"
+                  >
+                    <Menu className="h-4 w-4" strokeWidth={1.75} />
+                  </Button>
+                </TableHead>
+              )}
+            </TableRow>
+          </TableHeader>
+
+          {/* <TableHeader
+            className={cn(stickyHeader && "sticky top-0 z-20 bg-[#E6EBF1]")}
+          >
             <TableRow
               className={cn(
                 "border-b border-default hover:bg-[#E6EBF1]",
@@ -246,7 +393,7 @@ export function DataTable<T>({
                 </TableHead>
               )}
             </TableRow>
-          </TableHeader>
+          </TableHeader> */}
 
           <TableBody>
             {data.length === 0 ? (

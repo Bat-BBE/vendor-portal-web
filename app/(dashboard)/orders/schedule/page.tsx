@@ -14,7 +14,6 @@ import { type FilterOption } from "@/components/filters/checklist-filter";
 import { Eye } from "lucide-react";
 import { OrderDetailsDialog } from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
-import { TableRow, TableCell } from "@/components/ui/table";
 
 type OrderStatus = "delivered" | "prepared" | "pending";
 
@@ -30,9 +29,6 @@ interface OrderRow {
   status: OrderStatus;
 }
 
-function parseAmount(value: string) {
-  return Number(value.replace(/[^\d]/g, "")) || 0;
-}
 const PAYMENTS_COLUMN_OPTIONS: FilterOption[] = [
   { value: "debit", label: "Дебит" },
   { value: "credit", label: "Кредит" },
@@ -146,7 +142,7 @@ const orderColumns: DataTableColumn<OrderRow>[] = [
   {
     key: "amount",
     header: "Үнийн дүн",
-    align: "right",
+    align: "left",
   },
   {
     key: "status",
@@ -160,8 +156,8 @@ const orderColumns: DataTableColumn<OrderRow>[] = [
 ];
 
 const ORDER_TABS = [
-  { value: "active", label: "Идэвхтэй захиалга" },
-  { value: "history", label: "Захиалгын түүх" },
+  { value: "active", label: "Жагсаалт" },
+  { value: "calendar", label: "Календар" },
 ];
 
 export default function OrdersPage() {
@@ -173,22 +169,18 @@ export default function OrdersPage() {
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState("active");
 
-  const amountIndex = orderColumns.findIndex((c) => c.key === "amount");
-  const columnsBeforeAmount = amountIndex;
-  const columnsAfterAmount = orderColumns.length - amountIndex - 1;
-
   const paginatedOrders = useMemo(() => {
     const start = (page - 1) * pageSize;
     return orders.slice(start, start + pageSize);
   }, [orders, page, pageSize]);
 
-  const refresh = async () => {
+  const refresh = async function onClickRefresh() {
     console.log("hello refresh hiisen");
   };
 
-  const handleDownload = async () => {
-    console.log("tataj avch baina aa .. ");
-  };
+  // const handleDownload = async () => {
+  //   console.log("tataj avch baina aa .. ");
+  // };
 
   return (
     <div className="flex h-auto min-h-0 min-w-0 flex-col gap-6">
@@ -200,7 +192,7 @@ export default function OrdersPage() {
         columnOptions={PAYMENTS_COLUMN_OPTIONS}
         showYearFilter={true}
         refresh={refresh}
-        onDownload={handleDownload}
+        // onDownload={handleDownload}
       />
       <div className="flex-1 min-h-0 min-w-0">
         <DataTable
@@ -226,33 +218,6 @@ export default function OrdersPage() {
           )}
           stickyHeader
           emptyMessage="Захиалга олдсонгүй"
-          footer={(rows) => {
-            const totalAmount = rows.reduce(
-              (sum, row) => sum + parseAmount(row.amount),
-              0,
-            );
-
-            return (
-              <TableRow className="border-t border-default bg-background-secondary hover:bg-background-secondary">
-                <TableCell className="px-4" />
-                <TableCell
-                  colSpan={columnsBeforeAmount}
-                  className="body-2-bold px-4 text-foreground"
-                >
-                  Нийт: {rows.length} захиалга
-                </TableCell>
-
-                <TableCell className="body-2-bold text-foreground">
-                  {totalAmount.toLocaleString("mn-MN")}₮
-                </TableCell>
-
-                {columnsAfterAmount > 0 && (
-                  <TableCell colSpan={columnsAfterAmount} className="px-4" />
-                )}
-                <TableCell className="px-2" />
-              </TableRow>
-            );
-          }}
         />
       </div>
       <TablePagination

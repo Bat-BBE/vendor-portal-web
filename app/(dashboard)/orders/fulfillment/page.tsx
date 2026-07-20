@@ -7,6 +7,7 @@ import {
   DataTable,
   StatusPill,
   type DataTableColumn,
+  DataTableColumnGroup,
 } from "@/components/data-table";
 import { TablePagination } from "@/components/table-pagination";
 import { FilterBar } from "@/components/filters/filter-bar";
@@ -14,7 +15,6 @@ import { type FilterOption } from "@/components/filters/checklist-filter";
 import { Eye } from "lucide-react";
 import { OrderDetailsDialog } from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
-import { TableRow, TableCell } from "@/components/ui/table";
 
 type OrderStatus = "delivered" | "prepared" | "pending";
 
@@ -30,9 +30,6 @@ interface OrderRow {
   status: OrderStatus;
 }
 
-function parseAmount(value: string) {
-  return Number(value.replace(/[^\d]/g, "")) || 0;
-}
 const PAYMENTS_COLUMN_OPTIONS: FilterOption[] = [
   { value: "debit", label: "Дебит" },
   { value: "credit", label: "Кредит" },
@@ -118,51 +115,79 @@ const statusLabel: Record<
   },
 };
 
+// const orderColumns: DataTableColumn<OrderRow>[] = [
+//   {
+//     key: "orderNumber",
+//     header: "Захиалгын дугаар",
+//   },
+//   {
+//     key: "orderDate",
+//     header: "Захиалгын огноо",
+//   },
+//   {
+//     key: "deliveryDate",
+//     header: "Хүргэх огноо",
+//   },
+//   {
+//     key: "viewedDate",
+//     header: "Харсан огноо",
+//   },
+//   {
+//     key: "branch",
+//     header: "Салбар",
+//   },
+//   {
+//     key: "supplier",
+//     header: "Нийлүүлэгч",
+//   },
+//   {
+//     key: "amount",
+//     header: "Үнийн дүн",
+//     align: "left",
+//   },
+//   {
+//     key: "status",
+//     header: "Төлөв",
+//     render: (row) => {
+//       const { label, tone } = statusLabel[row.status];
+
+//       return <StatusPill tone={tone} label={label} />;
+//     },
+//   },
+// ];
 const orderColumns: DataTableColumn<OrderRow>[] = [
-  {
-    key: "orderNumber",
-    header: "Захиалгын дугаар",
-  },
-  {
-    key: "orderDate",
-    header: "Захиалгын огноо",
-  },
-  {
-    key: "deliveryDate",
-    header: "Хүргэх огноо",
-  },
-  {
-    key: "viewedDate",
-    header: "Харсан огноо",
-  },
-  {
-    key: "branch",
-    header: "Салбар",
-  },
-  {
-    key: "supplier",
-    header: "Нийлүүлэгч",
-  },
-  {
-    key: "amount",
-    header: "Үнийн дүн",
-    align: "right",
-  },
+  { key: "branch", header: "Салбар" },
+  { key: "orderNumber", header: "Захиалгын дугаар" },
+  { key: "orderDate", header: "Захиалгын огноо" },
+  { key: "orderQty", header: "Тоо ширхэг", align: "right" },
+  { key: "orderAmount", header: "Үнийн дүн", align: "right" },
+  { key: "deliveryQty", header: "Тоо ширхэг", align: "right" },
+  { key: "deliveryAmount", header: "Үнийн дүн", align: "right" },
+  { key: "diffQty", header: "Тоо ширхэг", align: "right" },
+  { key: "diffAmount", header: "Үнийн дүн", align: "right" },
   {
     key: "status",
     header: "Төлөв",
     render: (row) => {
       const { label, tone } = statusLabel[row.status];
-
       return <StatusPill tone={tone} label={label} />;
     },
   },
 ];
 
-const ORDER_TABS = [
-  { value: "active", label: "Идэвхтэй захиалга" },
-  { value: "history", label: "Захиалгын түүх" },
+const orderColumnGroups: DataTableColumnGroup[] = [
+  { key: "order", header: "Захиалга", columnKeys: ["orderQty", "orderAmount"] },
+  {
+    key: "delivery",
+    header: "Нийлүүлэлт",
+    columnKeys: ["deliveryQty", "deliveryAmount"],
+  },
+  { key: "diff", header: "Зөрүү", columnKeys: ["diffQty", "diffAmount"] },
 ];
+// const ORDER_TABS = [
+//   { value: "active", label: "Жагсаалт" },
+//   { value: "calendar", label: "Календар" },
+// ];
 
 export default function OrdersPage() {
   // const [selectedIds, setSelectedIds] = useState<Set<string | number>>(
@@ -173,16 +198,12 @@ export default function OrdersPage() {
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState("active");
 
-  const amountIndex = orderColumns.findIndex((c) => c.key === "amount");
-  const columnsBeforeAmount = amountIndex;
-  const columnsAfterAmount = orderColumns.length - amountIndex - 1;
-
   const paginatedOrders = useMemo(() => {
     const start = (page - 1) * pageSize;
     return orders.slice(start, start + pageSize);
   }, [orders, page, pageSize]);
 
-  const refresh = async () => {
+  const refresh = async function onClickRefresh() {
     console.log("hello refresh hiisen");
   };
 
@@ -193,7 +214,7 @@ export default function OrdersPage() {
   return (
     <div className="flex h-auto min-h-0 min-w-0 flex-col gap-6">
       <FilterBar
-        tabs={ORDER_TABS}
+        // tabs={ORDER_TABS}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         search={true}
@@ -205,6 +226,7 @@ export default function OrdersPage() {
       <div className="flex-1 min-h-0 min-w-0">
         <DataTable
           columns={orderColumns}
+          columnGroups={orderColumnGroups}
           data={paginatedOrders}
           numbered
           getRowId={(row) => row.id}
@@ -226,33 +248,6 @@ export default function OrdersPage() {
           )}
           stickyHeader
           emptyMessage="Захиалга олдсонгүй"
-          footer={(rows) => {
-            const totalAmount = rows.reduce(
-              (sum, row) => sum + parseAmount(row.amount),
-              0,
-            );
-
-            return (
-              <TableRow className="border-t border-default bg-background-secondary hover:bg-background-secondary">
-                <TableCell className="px-4" />
-                <TableCell
-                  colSpan={columnsBeforeAmount}
-                  className="body-2-bold px-4 text-foreground"
-                >
-                  Нийт: {rows.length} захиалга
-                </TableCell>
-
-                <TableCell className="body-2-bold text-foreground">
-                  {totalAmount.toLocaleString("mn-MN")}₮
-                </TableCell>
-
-                {columnsAfterAmount > 0 && (
-                  <TableCell colSpan={columnsAfterAmount} className="px-4" />
-                )}
-                <TableCell className="px-2" />
-              </TableRow>
-            );
-          }}
         />
       </div>
       <TablePagination
