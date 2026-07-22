@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
 import type { UserRole } from "@/models/sidebarModel";
@@ -49,7 +49,7 @@ export function DashboardShell({
       />
       <SidebarInset>
         <HeaderWrapper role={role} user={user} />
-        <main className="flex-1 min-w-0 overflow-y-auto px-2 py-1">
+        <main className="flex-1 min-w-0 overflow-y-auto px-4 py-1">
           {children}
         </main>
       </SidebarInset>

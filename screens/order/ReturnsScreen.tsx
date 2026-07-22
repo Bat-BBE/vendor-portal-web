@@ -160,9 +160,6 @@ const ORDER_TABS = [
 ];
 
 export default function ReturnsScreen() {
-  // const [selectedIds, setSelectedIds] = useState<Set<string | number>>(
-  //   new Set(),
-  // );
   const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
