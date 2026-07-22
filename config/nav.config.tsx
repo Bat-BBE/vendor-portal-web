@@ -97,32 +97,32 @@ const ORDERS_VIEW: NavItem = {
 const PARTNERS: NavItem = {
   label: "Хамтын ажиллагаа",
   icon: BriefcaseBusiness,
-  roles: ["system_admin", "accountant"],
+  roles: ["system_admin", "accountant", "pharmacy_manager"],
   children: [
     {
       label: "Бараа бүтээгдэхүүн",
       href: "/partners",
-      roles: ["system_admin"],
+      roles: ["system_admin", "accountant", "pharmacy_manager"],
     },
     {
       label: "Бар код өөрчлөх",
       href: "/partners/barcode",
-      roles: ["system_admin"],
+      roles: ["system_admin", "accountant", "pharmacy_manager"],
     },
     {
       label: "Үнэ өөрчлөх",
       href: "/partners/price",
-      roles: ["system_admin", "customer"],
+      roles: ["system_admin", "customer", "accountant", "pharmacy_manager"],
     },
     {
       label: "Урамшуулал",
       href: "/partners/promotions",
-      roles: ["system_admin", "customer"],
+      roles: ["system_admin", "customer", "accountant", "pharmacy_manager"],
     },
     {
       label: "Тасалдал",
       href: "/partners/outages",
-      roles: ["system_admin", "customer"],
+      roles: ["system_admin", "customer", "accountant", "pharmacy_manager"],
     },
   ],
 };
