@@ -16,14 +16,14 @@ interface OrderItem {
   totalPrice: string;
 }
 
-interface OrderRow {
+export interface OrderDetailsDialogOrder {
   id: string;
   orderNumber: string;
   branch?: string;
-  orderDate: string;
-  viewedDate: string;
-  deliveryDate: string;
-  status: string;
+  orderDate?: string;
+  viewedDate?: string;
+  deliveryDate?: string;
+  status?: string;
 }
 
 const mockItems: OrderItem[] = [
@@ -55,7 +55,7 @@ export function OrderDetailsDialog({
   open,
   onOpenChange,
 }: {
-  order: OrderRow | null;
+  order: OrderDetailsDialogOrder | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
@@ -70,29 +70,32 @@ export function OrderDetailsDialog({
         <div className="flex h-[600px]">
           <div className="w-60 shrink-0 border-r border-default p-5 space-y-4">
             <div className="font-semibold text-lg">{order.orderNumber}</div>
-            <StatusPill tone="warning" label="Хүлээгдэж байна" />
+            <StatusPill
+              tone="warning"
+              label={order.status ?? "Хүлээгдэж байна"}
+            />
 
             <div className="space-y-1">
               <div className="text-xs text-foreground-tertiary">Салбар:</div>
-              <div className="font-medium">{order.branch}</div>
+              <div className="font-medium">{order.branch ?? "-"}</div>
             </div>
             <div className="space-y-1">
               <div className="text-xs text-foreground-tertiary">
                 Захиалсан огноо:
               </div>
-              <div className="font-medium">{order.orderDate}</div>
+              <div className="font-medium">{order.orderDate ?? "-"}</div>
             </div>
             <div className="space-y-1">
               <div className="text-xs text-foreground-tertiary">
                 Харсан огноо:
               </div>
-              <div className="font-medium">{order.viewedDate}</div>
+              <div className="font-medium">{order.viewedDate ?? "-"}</div>
             </div>
             <div className="space-y-1">
               <div className="text-xs text-foreground-tertiary">
                 Хүргэх огноо:
               </div>
-              <div className="font-medium">{order.deliveryDate}</div>
+              <div className="font-medium">{order.deliveryDate ?? "-"}</div>
             </div>
           </div>
 

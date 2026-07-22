@@ -14,6 +14,7 @@ import { type FilterOption } from "@/components/filters/checklist-filter";
 import { Eye } from "lucide-react";
 import { OrderDetailsDialog } from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
+import { TableRow, TableCell } from "@/components/ui/table";
 
 type OrderStatus = "delivered" | "prepared" | "pending";
 
@@ -27,6 +28,16 @@ interface OrderRow {
   supplier: string;
   amount: string;
   status: OrderStatus;
+  orderQty: number;
+  orderAmount: string;
+  deliveryQty: number;
+  deliveryAmount: string;
+  diffQty: number;
+  diffAmount: string;
+}
+
+function parseAmount(value: string) {
+  return Number(value.replace(/[^\d-]/g, "")) || 0;
 }
 
 const PAYMENTS_COLUMN_OPTIONS: FilterOption[] = [
@@ -46,6 +57,12 @@ const orders: OrderRow[] = [
     supplier: "Нийлүүлэгчийн нэр",
     amount: "123,456,789₮",
     status: "delivered",
+    orderQty: 120,
+    orderAmount: "123,456,789₮",
+    deliveryQty: 118,
+    deliveryAmount: "121,200,000₮",
+    diffQty: -2,
+    diffAmount: "-2,256,789₮",
   },
   {
     id: "2",
@@ -57,6 +74,12 @@ const orders: OrderRow[] = [
     supplier: "АПУ ХК",
     amount: "89,000,000₮",
     status: "prepared",
+    orderQty: 80,
+    orderAmount: "89,000,000₮",
+    deliveryQty: 80,
+    deliveryAmount: "89,000,000₮",
+    diffQty: 0,
+    diffAmount: "0₮",
   },
   {
     id: "3",
@@ -68,6 +91,12 @@ const orders: OrderRow[] = [
     supplier: "MCS Coca-Cola",
     amount: "256,800,000₮",
     status: "pending",
+    orderQty: 210,
+    orderAmount: "256,800,000₮",
+    deliveryQty: 0,
+    deliveryAmount: "0₮",
+    diffQty: -210,
+    diffAmount: "-256,800,000₮",
   },
   {
     id: "4",
@@ -79,6 +108,12 @@ const orders: OrderRow[] = [
     supplier: "Тэсо ХХК",
     amount: "65,300,000₮",
     status: "delivered",
+    orderQty: 55,
+    orderAmount: "65,300,000₮",
+    deliveryQty: 55,
+    deliveryAmount: "65,300,000₮",
+    diffQty: 0,
+    diffAmount: "0₮",
   },
   {
     id: "5",
@@ -90,6 +125,12 @@ const orders: OrderRow[] = [
     supplier: "Номин Холдинг",
     amount: "145,900,000₮",
     status: "prepared",
+    orderQty: 130,
+    orderAmount: "145,900,000₮",
+    deliveryQty: 125,
+    deliveryAmount: "140,000,000₮",
+    diffQty: -5,
+    diffAmount: "-5,900,000₮",
   },
 ];
 
@@ -150,10 +191,13 @@ export default function FulFillmentScreen() {
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState("active");
 
+  const summaryStartIndex = orderColumns.findIndex((c) => c.key === "orderQty");
+  const columnsBeforeSummary = summaryStartIndex;
+
   const paginatedOrders = useMemo(() => {
     const start = (page - 1) * pageSize;
     return orders.slice(start, start + pageSize);
-  }, [orders, page, pageSize]);
+  }, [page, pageSize]);
 
   const refresh = async function onClickRefresh() {
     console.log("hello refresh hiisen");
@@ -199,6 +243,64 @@ export default function FulFillmentScreen() {
           )}
           stickyHeader
           emptyMessage="Захиалга олдсонгүй"
+          footer={(rows) => {
+            const totalOrderQty = rows.reduce(
+              (sum, row: OrderRow) => sum + row.orderQty,
+              0,
+            );
+            const totalOrderAmount = rows.reduce(
+              (sum, row: OrderRow) => sum + parseAmount(row.orderAmount),
+              0,
+            );
+            const totalDeliveryQty = rows.reduce(
+              (sum, row: OrderRow) => sum + row.deliveryQty,
+              0,
+            );
+            const totalDeliveryAmount = rows.reduce(
+              (sum, row: OrderRow) => sum + parseAmount(row.deliveryAmount),
+              0,
+            );
+            const totalDiffQty = rows.reduce(
+              (sum, row: OrderRow) => sum + row.diffQty,
+              0,
+            );
+            const totalDiffAmount = rows.reduce(
+              (sum, row: OrderRow) => sum + parseAmount(row.diffAmount),
+              0,
+            );
+
+            return (
+              <TableRow className="border-t border-default bg-background-secondary hover:bg-background-secondary">
+                <TableCell className="px-4" />
+                <TableCell
+                  colSpan={columnsBeforeSummary}
+                  className="body-2-bold px-4 text-foreground"
+                >
+                  Нийт: {rows.length} захиалга
+                </TableCell>
+                <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
+                  {totalOrderQty.toLocaleString("mn-MN")}
+                </TableCell>
+                <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
+                  {totalOrderAmount.toLocaleString("mn-MN")}₮
+                </TableCell>
+                <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
+                  {totalDeliveryQty.toLocaleString("mn-MN")}
+                </TableCell>
+                <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
+                  {totalDeliveryAmount.toLocaleString("mn-MN")}₮
+                </TableCell>
+                <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
+                  {totalDiffQty.toLocaleString("mn-MN")}
+                </TableCell>
+                <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
+                  {totalDiffAmount.toLocaleString("mn-MN")}₮
+                </TableCell>
+                <TableCell className="px-4" />
+                <TableCell className="px-2" />
+              </TableRow>
+            );
+          }}
         />
       </div>
       <TablePagination

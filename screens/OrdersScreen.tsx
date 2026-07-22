@@ -14,6 +14,7 @@ import { Eye } from "lucide-react";
 import { OrderDetailsDialog } from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
+import { parseAmount } from "@/helpers/render";
 
 type OrderStatus = "delivered" | "prepared" | "pending";
 type TabKey = "active" | "history";
@@ -40,10 +41,6 @@ interface HistoryOrderRow {
   supplier: string;
   amount: string;
   paymentMethod: string;
-}
-
-function parseAmount(value: string) {
-  return Number(value.replace(/[^\d]/g, "")) || 0;
 }
 
 const statusLabel: Record<
@@ -356,7 +353,7 @@ export default function OrdersScreen() {
                   Нийт: {rows.length} захиалга
                 </TableCell>
 
-                <TableCell className="body-2-bold text-foreground">
+                <TableCell className="body-2-bold text-foreground text-right px-4 py-2">
                   {totalAmount.toLocaleString("mn-MN")}₮
                 </TableCell>
 

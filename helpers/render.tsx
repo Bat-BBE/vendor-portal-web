@@ -15,3 +15,7 @@ export function renderIcon(icon?: NavItem["icon"], size: number = 24) {
     style: { width: size, height: size },
   });
 }
+
+export function parseAmount(value: string) {
+  return Number(value.replace(/[^\d]/g, "")) || 0;
+}

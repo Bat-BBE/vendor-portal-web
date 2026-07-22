@@ -2,198 +2,158 @@
 
 import { useState, useMemo } from "react";
 
-import {
-  DataTable,
-  StatusPill,
-  type DataTableColumn,
-} from "@/components/data-table";
+import { DataTable, type DataTableColumn } from "@/components/data-table";
 import { TablePagination } from "@/components/table-pagination";
 import { FilterBar } from "@/components/filters/filter-bar";
 import { type FilterOption } from "@/components/filters/checklist-filter";
 import { Eye } from "lucide-react";
-import { OrderDetailsDialog } from "@/components/order-details-dialog";
+import {
+  OrderDetailsDialog,
+  type OrderDetailsDialogOrder,
+} from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
+import { TableRow, TableCell } from "@/components/ui/table";
 
-type OrderStatus = "delivered" | "prepared" | "pending";
+type TabKey = "active" | "history";
 
-interface OrderRow {
+interface ReturnRow {
   id: string;
-  orderNumber: string;
-  orderDate: string;
-  deliveryDate: string;
+  returnMonth: string;
   viewedDate: string;
-  branch: string;
-  supplier: string;
+  returnDate: string;
+  orderNumber: string;
+  quantity: number;
   amount: string;
-  status: OrderStatus;
 }
 
-const PAYMENTS_COLUMN_OPTIONS: FilterOption[] = [
+function parseAmount(value: string) {
+  return Number(value.replace(/[^\d-]/g, "")) || 0;
+}
+
+function makeReturnRow(idx: number): ReturnRow {
+  return {
+    id: `r-${idx}`,
+    returnMonth: "2026/03",
+    viewedDate: "2026/03/12",
+    returnDate: "2026/03/12",
+    orderNumber: "#11213445",
+    quantity: 12,
+    amount: "123,456,789₮",
+  };
+}
+
+const activeReturns: ReturnRow[] = Array.from({ length: 10 }, (_, i) =>
+  makeReturnRow(i + 1),
+);
+
+const historyReturns: ReturnRow[] = Array.from({ length: 6 }, (_, i) =>
+  makeReturnRow(i + 1),
+);
+
+const returnColumns: DataTableColumn<ReturnRow>[] = [
+  { key: "returnMonth", header: "Буцаасан сар" },
+  { key: "viewedDate", header: "Харсан огноо" },
+  { key: "returnDate", header: "Буцаасан огноо" },
+  { key: "orderNumber", header: "Захиалгын дугаар" },
+  { key: "quantity", header: "Тоо ширхэг", align: "right" },
+  { key: "amount", header: "Үнийн дүн", align: "right" },
+];
+
+const RETURN_COLUMN_OPTIONS: FilterOption[] = [
   { value: "debit", label: "Дебит" },
   { value: "credit", label: "Кредит" },
   { value: "keyword", label: "Гүйлгээт үгтэй" },
 ];
 
-const orders: OrderRow[] = [
-  {
-    id: "1",
-    orderNumber: "#12456",
-    orderDate: "2026/03/12",
-    deliveryDate: "2026/03/12",
-    viewedDate: "2026/03/12",
-    branch: "Салбарын нэр",
-    supplier: "Нийлүүлэгчийн нэр",
-    amount: "123,456,789₮",
-    status: "delivered",
-  },
-  {
-    id: "2",
-    orderNumber: "#12457",
-    orderDate: "2026/03/13",
-    deliveryDate: "2026/03/14",
-    viewedDate: "2026/03/13",
-    branch: "Баянзүрх салбар",
-    supplier: "АПУ ХК",
-    amount: "89,000,000₮",
-    status: "prepared",
-  },
-  {
-    id: "3",
-    orderNumber: "#12458",
-    orderDate: "2026/03/14",
-    deliveryDate: "2026/03/15",
-    viewedDate: "2026/03/14",
-    branch: "Хан-Уул салбар",
-    supplier: "MCS Coca-Cola",
-    amount: "256,800,000₮",
-    status: "pending",
-  },
-  {
-    id: "4",
-    orderNumber: "#12459",
-    orderDate: "2026/03/15",
-    deliveryDate: "2026/03/16",
-    viewedDate: "2026/03/15",
-    branch: "Сүхбаатар салбар",
-    supplier: "Тэсо ХХК",
-    amount: "65,300,000₮",
-    status: "delivered",
-  },
-  {
-    id: "5",
-    orderNumber: "#12460",
-    orderDate: "2026/03/16",
-    deliveryDate: "2026/03/17",
-    viewedDate: "2026/03/16",
-    branch: "Чингэлтэй салбар",
-    supplier: "Номин Холдинг",
-    amount: "145,900,000₮",
-    status: "prepared",
-  },
+const RETURN_TABS = [
+  { value: "active", label: "Идэвхтэй захиалга" },
+  { value: "history", label: "Захиалгын түүх" },
 ];
 
-const statusLabel: Record<
-  OrderStatus,
-  {
-    label: string;
-    tone: "success" | "warning" | "info";
-  }
-> = {
-  delivered: {
-    label: "Хүргэлтэд гарсан",
-    tone: "warning",
-  },
-  prepared: {
-    label: "Захиалга бэлтгэгдэж байна",
-    tone: "info",
-  },
-  pending: {
-    label: "Хүлээгдэж байна",
-    tone: "success",
-  },
-};
-
-const orderColumns: DataTableColumn<OrderRow>[] = [
-  {
-    key: "orderNumber",
-    header: "Захиалгын дугаар",
-  },
-  {
-    key: "orderDate",
-    header: "Захиалгын огноо",
-  },
-  {
-    key: "deliveryDate",
-    header: "Хүргэх огноо",
-  },
-  {
-    key: "viewedDate",
-    header: "Харсан огноо",
-  },
-  {
-    key: "branch",
-    header: "Салбар",
-  },
-  {
-    key: "supplier",
-    header: "Нийлүүлэгч",
-  },
-  {
-    key: "amount",
-    header: "Үнийн дүн",
-    align: "left",
-  },
-  {
-    key: "status",
-    header: "Төлөв",
-    render: (row) => {
-      const { label, tone } = statusLabel[row.status];
-
-      return <StatusPill tone={tone} label={label} />;
+const TAB_CONFIG = {
+  active: {
+    data: activeReturns,
+    columns: returnColumns,
+    filters: {
+      search: true,
+      showYearFilter: true,
+      columnOptions: RETURN_COLUMN_OPTIONS,
+      showRefresh: true,
     },
   },
-];
-
-const ORDER_TABS = [
-  { value: "active", label: "Идэвхтэй захиалга" },
-  { value: "calendar", label: "Захиалгын түүх" },
-];
+  history: {
+    data: historyReturns,
+    columns: returnColumns,
+    filters: {
+      search: true,
+      showYearFilter: true,
+      columnOptions: RETURN_COLUMN_OPTIONS,
+      showRefresh: false,
+    },
+  },
+} as const;
 
 export default function ReturnsScreen() {
-  const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [activeTab, setActiveTab] = useState("active");
+  const [selectedOrder, setSelectedOrder] =
+    useState<OrderDetailsDialogOrder | null>(null);
+  const [activeTab, setActiveTab] = useState<TabKey>("active");
+  const [pageByTab, setPageByTab] = useState<Record<TabKey, number>>({
+    active: 1,
+    history: 1,
+  });
+  const [pageSizeByTab, setPageSizeByTab] = useState<Record<TabKey, number>>({
+    active: 10,
+    history: 10,
+  });
 
-  const paginatedOrders = useMemo(() => {
+  const page = pageByTab[activeTab];
+  const pageSize = pageSizeByTab[activeTab];
+
+  const { data, columns, filters } = TAB_CONFIG[activeTab];
+
+  const quantityIndex = columns.findIndex((c) => c.key === "quantity");
+  const columnsBeforeQuantity = quantityIndex;
+  const columnsAfterAmount = columns.length - quantityIndex - 2;
+
+  const paginatedData = useMemo(() => {
     const start = (page - 1) * pageSize;
-    return orders.slice(start, start + pageSize);
-  }, [orders, page, pageSize]);
+    return data.slice(start, start + pageSize);
+  }, [data, page, pageSize]);
+
+  function handleTabChange(value: string) {
+    setActiveTab(value as TabKey);
+  }
+
+  function setPage(p: number) {
+    setPageByTab((prev) => ({ ...prev, [activeTab]: p }));
+  }
+
+  function setPageSize(size: number) {
+    setPageSizeByTab((prev) => ({ ...prev, [activeTab]: size }));
+    setPageByTab((prev) => ({ ...prev, [activeTab]: 1 }));
+  }
 
   const refresh = async function onClickRefresh() {
     console.log("hello refresh hiisen");
   };
 
-  // const handleDownload = async () => {
-  //   console.log("tataj avch baina aa .. ");
-  // };
-
   return (
     <div className="flex h-auto min-h-0 min-w-0 flex-col gap-6">
       <FilterBar
-        tabs={ORDER_TABS}
+        tabs={RETURN_TABS}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
-        search={true}
-        columnOptions={PAYMENTS_COLUMN_OPTIONS}
-        showYearFilter={true}
-        refresh={refresh}
-        // onDownload={handleDownload}
+        onTabChange={handleTabChange}
+        search={filters.search}
+        columnOptions={filters.columnOptions}
+        showYearFilter={filters.showYearFilter}
+        refresh={filters.showRefresh ? refresh : undefined}
       />
+
       <div className="flex-1 min-h-0 min-w-0">
         <DataTable
-          columns={orderColumns}
-          data={paginatedOrders}
+          key={activeTab}
+          columns={columns}
+          data={paginatedData}
           numbered
           getRowId={(row) => row.id}
           onHeaderMenuClick={() => console.log("Column settings")}
@@ -213,19 +173,55 @@ export default function ReturnsScreen() {
             </Button>
           )}
           stickyHeader
-          emptyMessage="Захиалга олдсонгүй"
+          emptyMessage="Буцаалт олдсонгүй"
+          footer={(rows) => {
+            const totalQuantity = rows.reduce(
+              (sum, row: ReturnRow) => sum + row.quantity,
+              0,
+            );
+            const totalAmount = rows.reduce(
+              (sum, row: ReturnRow) => sum + parseAmount(row.amount),
+              0,
+            );
+
+            return (
+              <TableRow className="border-t border-default bg-background-secondary hover:bg-background-secondary">
+                <TableCell className="px-4" />
+
+                <TableCell
+                  colSpan={columnsBeforeQuantity}
+                  className="body-2-bold px-4 text-foreground"
+                >
+                  Нийт: {rows.length} буцаалт
+                </TableCell>
+
+                <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
+                  {totalQuantity.toLocaleString("mn-MN")}
+                </TableCell>
+
+                <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
+                  {totalAmount.toLocaleString("mn-MN")}₮
+                </TableCell>
+
+                {columnsAfterAmount > 0 && (
+                  <TableCell colSpan={columnsAfterAmount} className="px-4" />
+                )}
+
+                <TableCell className="px-2" />
+              </TableRow>
+            );
+          }}
         />
       </div>
+
       <TablePagination
         page={page}
         pageSize={pageSize}
-        totalItems={orders.length}
+        totalItems={data.length}
         onPageChange={setPage}
-        onPageSizeChange={(size) => {
-          setPageSize(size);
-          setPage(1);
-        }}
+        onPageSizeChange={setPageSize}
       />
+
       <OrderDetailsDialog
         order={selectedOrder}
         open={!!selectedOrder}

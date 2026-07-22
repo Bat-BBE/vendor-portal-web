@@ -14,6 +14,8 @@ import { type FilterOption } from "@/components/filters/checklist-filter";
 import { OrderDetailsDialog } from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
+import { TableRow, TableCell } from "@/components/ui/table";
+import { parseAmount } from "@/helpers/render";
 
 type OrderStatus = "delivered" | "prepared" | "pending";
 
@@ -131,6 +133,10 @@ export default function ScheduleScreen() {
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState<"active" | "calendar">("active");
 
+  const amountIndex = orderColumns.findIndex((c) => c.key === "amount");
+  const columnsBeforeAmount = amountIndex;
+  const columnsAfterAmount = orderColumns.length - amountIndex - 1;
+
   const paginatedOrders = useMemo(() => {
     const start = (page - 1) * pageSize;
     return orders.slice(start, start + pageSize);
@@ -184,6 +190,36 @@ export default function ScheduleScreen() {
               )}
               stickyHeader
               emptyMessage="Захиалга олдсонгүй"
+              footer={(rows) => {
+                const totalAmount = rows.reduce(
+                  (sum, row: OrderRow) => sum + parseAmount(row.amount),
+                  0,
+                );
+
+                return (
+                  <TableRow className="border-t border-default bg-background-secondary hover:bg-background-secondary">
+                    <TableCell className="px-4" />
+                    <TableCell
+                      colSpan={columnsBeforeAmount}
+                      className="body-2-bold px-4 text-foreground"
+                    >
+                      Нийт: {rows.length} захиалга
+                    </TableCell>
+
+                    <TableCell className="body-2-bold text-foreground text-right px-4 py-2">
+                      {totalAmount.toLocaleString("mn-MN")}₮
+                    </TableCell>
+
+                    {columnsAfterAmount > 0 && (
+                      <TableCell
+                        colSpan={columnsAfterAmount}
+                        className="px-4"
+                      />
+                    )}
+                    <TableCell className="px-2" />
+                  </TableRow>
+                );
+              }}
             />
           </div>
 
