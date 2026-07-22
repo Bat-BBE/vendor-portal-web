@@ -270,13 +270,13 @@ export default function FulFillmentScreen() {
             );
 
             return (
-              <TableRow className="border-t border-default bg-background-secondary hover:bg-background-secondary">
+              <TableRow className="border-t border-default bg-[#E6EBF1] hover:bg-background-secondary">
                 <TableCell className="px-4" />
                 <TableCell
                   colSpan={columnsBeforeSummary}
                   className="body-2-bold px-4 text-foreground"
                 >
-                  Нийт: {rows.length} захиалга
+                  Нийт
                 </TableCell>
                 <TableCell className="body-2-bold text-right px-4 py-2 text-foreground">
                   {totalOrderQty.toLocaleString("mn-MN")}
