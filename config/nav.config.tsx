@@ -158,16 +158,6 @@ const CUSTOMER_SETTINGS: NavItem = {
   ],
 };
 
-// const PHARMACY_REQUESTS: NavItem = {
-//   label: "Хүсэлтүүд",
-//   icon: FileText,
-//   children: [
-//     { label: "Шинэ бүтээгдэхүүн", href: "/requests/new-product" },
-//     { label: "Баркод өөрчлөлт", href: "/requests/barcode" },
-//     { label: "Үнэ өөрчлөх", href: "/requests/price" },
-//   ],
-// };
-
 type RoleConfig = { nav: NavItem[]; bottom: NavItem[] };
 
 const NAV_CONFIG: Record<UserRole, RoleConfig> = {

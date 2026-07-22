@@ -2,10 +2,17 @@
 
 import { useState } from "react";
 import { useQueryStates } from "nuqs";
-import { Search, RefreshCw, Paperclip, Funnel } from "lucide-react";
+import {
+  Search,
+  RefreshCw,
+  Paperclip,
+  ChevronDown,
+  Funnel,
+} from "lucide-react";
 
 import { filterParsers } from "@/lib/filter-params";
 import { PeriodFilter, type PeriodFilterValue } from "./period-filter";
+import { ExportMenu } from "./export-menu";
 import { ChecklistFilter, type FilterOption } from "./checklist-filter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,6 +33,9 @@ interface FilterBarProps {
   search?: boolean;
   refresh?: () => void | Promise<void>;
   onDownload?: () => void | Promise<void>;
+  onTemplateDownload?: () => void | Promise<void>;
+  onExcelDownload?: () => void | Promise<void>;
+  onPdfDownload?: () => void | Promise<void>;
 }
 
 export function FilterBar({
@@ -37,6 +47,9 @@ export function FilterBar({
   showYearFilter = true,
   refresh,
   onDownload,
+  onExcelDownload,
+  onPdfDownload,
+  onTemplateDownload,
 }: FilterBarProps) {
   const [filters, setFilters] = useQueryStates(filterParsers, {
     shallow: false,
@@ -209,6 +222,29 @@ export function FilterBar({
           />
         )}
 
+        {(onTemplateDownload || onExcelDownload || onPdfDownload) && (
+          <ExportMenu
+            onTemplate={onTemplateDownload}
+            onExcel={onExcelDownload}
+            onPdf={onPdfDownload}
+            trigger={(open) => (
+              <Button
+                type="button"
+                variant="ghost"
+                className="h-10 shrink-0 rounded-xl bg-white px-4 py-6 font-normal text-foreground"
+              >
+                <span>Экспорт/Импорт</span>
+                <ChevronDown
+                  size={13}
+                  className={cn(
+                    "ml-2 shrink-0 text-[#898989] transition-transform duration-150",
+                    open && "rotate-180",
+                  )}
+                />
+              </Button>
+            )}
+          />
+        )}
         {onDownload && (
           <Button
             type="button"
