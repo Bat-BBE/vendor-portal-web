@@ -1,5 +1,5 @@
 import ScheduleScreen from "@/screens/order/ScheduleScreen";
 
-export default function LogPage() {
+export default function SchePage() {
   return <ScheduleScreen />;
 }

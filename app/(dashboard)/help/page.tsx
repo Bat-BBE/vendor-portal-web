@@ -1,5 +1,5 @@
 import HelpScreen from "@/screens/HelpScreen";
 
-export default function LogPage() {
+export default function HelpPage() {
   return <HelpScreen />;
 }

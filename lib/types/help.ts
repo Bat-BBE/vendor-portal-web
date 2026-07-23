@@ -7,3 +7,11 @@ export interface HelpArticle {
   fileType: HelpFileType;
   url: string;
 }
+
+export interface ContactArticle {
+  id: string;
+  name: string;
+  description: string;
+  phone: string;
+  email: string;
+}
