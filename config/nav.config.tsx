@@ -21,9 +21,24 @@ const COMMON_BOTTOM: NavItem[] = [
     icon: CircleCheck,
     description: "Системтийн ажилгаатай холбоотой заавар зөвөлгөө",
   },
-  { label: "Салбарын байршил", href: "/branches", icon: MapPin },
-  { label: "Санал хүсэлт", href: "/feedback", icon: CircleAlert },
-  { label: "Холбоо барих", href: "/contact", icon: MessageCircle },
+  {
+    label: "Салбарын байршил",
+    href: "/branches",
+    icon: MapPin,
+    description: "Байгууллагын салбарын байршилын",
+  },
+  {
+    label: "Санал хүсэлт",
+    href: "/feedback",
+    icon: CircleAlert,
+    description: "Үйл ажиллагаатай холбоотой санал хүсэлт",
+  },
+  {
+    label: "Холбоо барих",
+    href: "/contact",
+    icon: MessageCircle,
+    description: "Харилцаа холбоо",
+  },
 ];
 
 const HOME: NavItem = {

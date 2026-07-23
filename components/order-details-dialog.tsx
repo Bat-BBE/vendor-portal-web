@@ -8,6 +8,14 @@ import { TablePagination } from "@/components/table-pagination";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
+interface OrderDetailsDialogProps<T extends { id: string }> {
+  order: OrderDetailsDialogOrder | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  columns?: DataTableColumn<T>[];
+  items?: T[];
+}
+
 interface OrderItem {
   id: string;
   name: string;
@@ -24,6 +32,10 @@ export interface OrderDetailsDialogOrder {
   viewedDate?: string;
   deliveryDate?: string;
   status?: string;
+  req_type: string;
+  req_title: string;
+  description: string;
+  ref_image: string;
 }
 
 const mockItems: OrderItem[] = [
@@ -50,17 +62,18 @@ const itemColumns: DataTableColumn<OrderItem>[] = [
   { key: "totalPrice", header: "Нийт үнэ", align: "right" },
 ];
 
-export function OrderDetailsDialog({
+export function OrderDetailsDialog<T extends { id: string } = OrderItem>({
   order,
   open,
   onOpenChange,
-}: {
-  order: OrderDetailsDialogOrder | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
+  columns,
+  items,
+}: OrderDetailsDialogProps<T>) {
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(50);
+  const tableColumns =
+    columns ?? (itemColumns as unknown as DataTableColumn<T>[]);
+  const tableItems = items ?? (mockItems as unknown as T[]);
 
   if (!order) return null;
 
@@ -109,8 +122,8 @@ export function OrderDetailsDialog({
 
             <div className="flex-1 min-h-0 px-2">
               <DataTable
-                columns={itemColumns}
-                data={mockItems}
+                columns={tableColumns}
+                data={tableItems}
                 numbered
                 getRowId={(row) => row.id}
                 onHeaderMenuClick={() => console.log("Column settings")}
@@ -123,7 +136,7 @@ export function OrderDetailsDialog({
               <TablePagination
                 page={page}
                 pageSize={pageSize}
-                totalItems={mockItems.length}
+                totalItems={tableItems.length}
                 onPageChange={setPage}
                 onPageSizeChange={(size) => {
                   setPageSize(size);

@@ -38,7 +38,7 @@ export function HeaderBreadcrumb({ items }: { items: NavItem[] }) {
                     {item.label}
                   </BreadcrumbPage>
                 ) : isLast ? (
-                  <BreadcrumbPage className="truncate text-[14px] leading-5 text-foreground-secondary">
+                  <BreadcrumbPage className="truncate text-[14px] leading-5 text-foreground">
                     {item.label}
                   </BreadcrumbPage>
                 ) : (

@@ -12,7 +12,10 @@ import { TablePagination } from "@/components/table-pagination";
 import { FilterBar } from "@/components/filters/filter-bar";
 import { type FilterOption } from "@/components/filters/checklist-filter";
 import { Eye } from "lucide-react";
-import { OrderDetailsDialog } from "@/components/order-details-dialog";
+import {
+  OrderDetailsDialog,
+  type OrderDetailsDialogOrder,
+} from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
 
@@ -186,7 +189,8 @@ const orderColumnGroups: DataTableColumnGroup[] = [
 ];
 
 export default function FulFillmentScreen() {
-  const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
+  const [selectedOrder, setSelectedOrder] =
+    useState<OrderDetailsDialogOrder | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState("active");
@@ -202,6 +206,22 @@ export default function FulFillmentScreen() {
   const refresh = async function onClickRefresh() {
     console.log("hello refresh hiisen");
   };
+
+  function mapOrderRowToDialogOrder(row: OrderRow): OrderDetailsDialogOrder {
+    return {
+      id: row.id,
+      orderNumber: row.orderNumber,
+      branch: row.branch,
+      orderDate: row.orderDate,
+      viewedDate: row.viewedDate,
+      deliveryDate: row.deliveryDate,
+      status: row.status,
+      req_type: "",
+      req_title: "",
+      description: "",
+      ref_image: "",
+    };
+  }
 
   const handleDownload = async () => {
     console.log("tataj avch baina aa .. ");
@@ -234,7 +254,7 @@ export default function FulFillmentScreen() {
               className="h-8 w-8 text-foreground-tertiary hover:text-foreground"
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedOrder(row);
+                setSelectedOrder(mapOrderRowToDialogOrder(row));
               }}
               aria-label="Дэлгэрэнгүй харах"
             >

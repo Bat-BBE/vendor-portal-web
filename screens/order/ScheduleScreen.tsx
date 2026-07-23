@@ -11,7 +11,10 @@ import { TablePagination } from "@/components/table-pagination";
 import { FilterBar } from "@/components/filters/filter-bar";
 import { OrderCalendar } from "@/components/order-calendar";
 import { type FilterOption } from "@/components/filters/checklist-filter";
-import { OrderDetailsDialog } from "@/components/order-details-dialog";
+import {
+  OrderDetailsDialog,
+  type OrderDetailsDialogOrder,
+} from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import { TableRow, TableCell } from "@/components/ui/table";
@@ -128,7 +131,8 @@ const ORDER_TABS = [
 ];
 
 export default function ScheduleScreen() {
-  const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
+  const [selectedOrder, setSelectedOrder] =
+    useState<OrderDetailsDialogOrder | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState<"active" | "calendar">("active");
@@ -145,6 +149,22 @@ export default function ScheduleScreen() {
   const refresh = async function onClickRefresh() {
     console.log("hello refresh hiisen");
   };
+
+  function mapOrderRowToDialogOrder(row: OrderRow): OrderDetailsDialogOrder {
+    return {
+      id: row.id,
+      orderNumber: row.orderNumber,
+      orderDate: row.orderDate,
+      deliveryDate: row.deliveryDate,
+      viewedDate: row.viewedDate,
+      branch: row.branch,
+      status: row.status,
+      req_type: "",
+      req_title: "",
+      description: "",
+      ref_image: "",
+    };
+  }
 
   function handleTabChange(value: string) {
     setActiveTab(value as "active" | "calendar");
@@ -181,7 +201,7 @@ export default function ScheduleScreen() {
                   className="h-8 w-8 text-foreground-tertiary hover:text-foreground"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedOrder(row);
+                    setSelectedOrder(mapOrderRowToDialogOrder(row));
                   }}
                   aria-label="Дэлгэрэнгүй харах"
                 >
@@ -235,7 +255,12 @@ export default function ScheduleScreen() {
           />
         </>
       ) : (
-        <OrderCalendar orders={orders} onSelectOrder={setSelectedOrder} />
+        <OrderCalendar
+          orders={orders}
+          onSelectOrder={(order) =>
+            setSelectedOrder(mapOrderRowToDialogOrder(order))
+          }
+        />
       )}
 
       <OrderDetailsDialog

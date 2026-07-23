@@ -36,6 +36,7 @@ interface FilterBarProps {
   onTemplateDownload?: () => void | Promise<void>;
   onExcelDownload?: () => void | Promise<void>;
   onPdfDownload?: () => void | Promise<void>;
+  actions?: React.ReactNode;
 }
 
 export function FilterBar({
@@ -50,6 +51,7 @@ export function FilterBar({
   onExcelDownload,
   onPdfDownload,
   onTemplateDownload,
+  actions,
 }: FilterBarProps) {
   const [filters, setFilters] = useQueryStates(filterParsers, {
     shallow: false,
@@ -245,6 +247,7 @@ export function FilterBar({
             )}
           />
         )}
+        <div className="flex flex-wrap items-center gap-2">{actions}</div>
         {onDownload && (
           <Button
             type="button"

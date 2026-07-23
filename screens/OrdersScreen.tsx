@@ -11,7 +11,10 @@ import { TablePagination } from "@/components/table-pagination";
 import { FilterBar } from "@/components/filters/filter-bar";
 import { type FilterOption } from "@/components/filters/checklist-filter";
 import { Eye } from "lucide-react";
-import { OrderDetailsDialog } from "@/components/order-details-dialog";
+import {
+  OrderDetailsDialog,
+  type OrderDetailsDialogOrder,
+} from "@/components/order-details-dialog";
 import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { parseAmount } from "@/helpers/render";
@@ -229,9 +232,8 @@ const TAB_CONFIG: Record<TabKey, TabConfig> = {
 };
 
 export default function OrdersScreen() {
-  const [selectedOrder, setSelectedOrder] = useState<ActiveOrderRow | null>(
-    null,
-  );
+  const [selectedOrder, setSelectedOrder] =
+    useState<OrderDetailsDialogOrder | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("active");
 
   const [pageByTab, setPageByTab] = useState<Record<TabKey, number>>({
@@ -277,6 +279,24 @@ export default function OrdersScreen() {
   const handleDownload = async () => {
     console.log("tataj avch baina aa .. ");
   };
+
+  function mapActiveOrderRowToDialogOrder(
+    row: ActiveOrderRow,
+  ): OrderDetailsDialogOrder {
+    return {
+      id: row.id,
+      orderNumber: row.orderNumber,
+      orderDate: row.orderDate,
+      deliveryDate: row.deliveryDate,
+      viewedDate: row.viewedDate,
+      branch: row.branch,
+      status: row.status,
+      req_type: "",
+      req_title: "",
+      description: "",
+      ref_image: "",
+    };
+  }
 
   const handleTemplateDownload = () => {
     console.log("template tatah");
@@ -326,7 +346,9 @@ export default function OrdersScreen() {
                     className="h-8 w-8 text-foreground-tertiary hover:text-foreground"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedOrder(row as ActiveOrderRow);
+                      setSelectedOrder(
+                        mapActiveOrderRowToDialogOrder(row as ActiveOrderRow),
+                      );
                     }}
                     aria-label="Дэлгэрэнгүй харах"
                   >
